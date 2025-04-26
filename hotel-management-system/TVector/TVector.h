@@ -37,8 +37,8 @@ public:
 		Iterator operator--(int) noexcept;
 		Iterator operator+(int) const;
 		Iterator operator-(int) const;
-		Iterator& operator+=(int) noexcept;
-		Iterator& operator-=(int) noexcept;
+		Iterator& operator+=(int);
+		Iterator& operator-=(int);
 		bool operator!=(const Iterator&) const noexcept;
 		bool operator==(const Iterator&) const noexcept;
 		ptrdiff_t operator-(const Iterator&) const;
@@ -54,12 +54,15 @@ public:
 
 	T* data() noexcept;
 	const T* data() const noexcept;
+	State* states() noexcept;
+	const State* states() const noexcept;
 	size_t size() const noexcept;
+	size_t used() const noexcept;
 	size_t capacity() const noexcept;
 	T& front() noexcept;
 	T& back() noexcept;
 	Iterator begin() const noexcept;
-	Iterator end() const noexcept;
+	Iterator end() const  noexcept;
 
 	void push_back(const T&) noexcept;
 	void push_back(T&&) noexcept;
@@ -184,8 +187,7 @@ const T* TVector<T>::data() const noexcept {
 }
 
 template<typename T>
-size_t TVector<T>::size() const noexcept
-{
+size_t TVector<T>::size() const noexcept {
 	return _used - _deleted;
 }
 
@@ -569,14 +571,17 @@ T* TVector<T>::Iterator::operator->() noexcept {
 }
 
 template<typename T>
-typename TVector<T>::Iterator& TVector<T>::Iterator::operator=(const Iterator& other) noexcept
-{
-	_ptr = other._ptr;
-	_parent = other._parent;
+typename TVector<T>::Iterator& TVector<T>::Iterator::operator=(const Iterator& other) noexcept {
+	if (this != &other) {
+		_ptr = other._ptr;
+		_parent = other._parent;
+	}
+
+	return *this;
 }
 
 template<typename T>
-typename TVector<T>::Iterator& TVector<T>::Iterator::operator++() noexcept{
+typename TVector<T>::Iterator& TVector<T>::Iterator::operator++() noexcept {
 	ptrdiff_t current_index = _ptr - _parent._data;
 
 	for (ptrdiff_t i = current_index + 1; i <= _parent._used; i++) {
@@ -622,7 +627,7 @@ template<typename T>
 typename TVector<T>::Iterator TVector<T>::Iterator::operator+(int num) const {
 	int new_index = _ptr - _parent._data;
 
-	if (new_index + num >= _parent._used || new_index + num < 0) {
+	if (new_index + num > _parent._used || new_index + num < 0) {
 		throw std::out_of_range("Iterator operator+: Index out of range.");
 	}
 
@@ -641,13 +646,13 @@ template<typename T>
 typename TVector<T>::Iterator TVector<T>::Iterator::operator-(int num) const {
 	int new_index = _ptr - _parent._data;
 
-	if (new_index + num >= _parent._used || new_index + num < 0) {
-		throw std::out_of_range("Iterator operator+: Index out of range.");
+	if (new_index - num > _parent._used || new_index - num < 0) {
+		throw std::out_of_range("Iterator operator-: Index out of range.");
 	}
 
-	while (new_index >= 0 && num > 0) {
+	while (new_index > 0 && num > 0) {
 		new_index--;
-
+		 
 		if (_parent._states[new_index] != Deleted) {
 			num--;
 		}
@@ -657,8 +662,12 @@ typename TVector<T>::Iterator TVector<T>::Iterator::operator-(int num) const {
 }
 
 template<typename T>
-typename TVector<T>::Iterator& TVector<T>::Iterator::operator+=(int num) noexcept {
+typename TVector<T>::Iterator& TVector<T>::Iterator::operator+=(int num) {
 	int new_index = _ptr - _parent._data;
+
+	if (new_index + num > _parent._used || new_index + num < 0) {
+		throw std::out_of_range("Iterator operator+: Index out of range.");
+	}
 
 	while (new_index < _parent._used && num > 0) {
 		new_index++;
@@ -674,9 +683,12 @@ typename TVector<T>::Iterator& TVector<T>::Iterator::operator+=(int num) noexcep
 }
 
 template<typename T>
-typename TVector<T>::Iterator& TVector<T>::Iterator::operator-=(int num) noexcept
-{
+typename TVector<T>::Iterator& TVector<T>::Iterator::operator-=(int num) {
 	int new_index = _ptr - _parent._data;
+
+	if (new_index - num > _parent._used || new_index - num < 0) {
+		throw std::out_of_range("Iterator operator-: Index out of range.");
+	}
 
 	while (new_index >= 0 && num > 0) {
 		new_index--;
