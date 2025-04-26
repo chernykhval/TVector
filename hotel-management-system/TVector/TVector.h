@@ -74,10 +74,12 @@ public:
 
 
 	bool is_empty() const noexcept;
-	TVector& operator=(const TVector& other) noexcept;
-	TVector& operator=(TVector&& other) noexcept;
+	TVector& operator=(const TVector&) noexcept;
+	TVector& operator=(TVector&&) noexcept;
 	bool operator==(const TVector<T>&) const noexcept;
+	bool operator!=(const TVector<T>&) const noexcept;
 	T& operator[](size_t);
+	const T& operator[](size_t) const;
 
 	template<typename U>
 	friend std::ostream& operator<<(std::ostream&, const TVector<U>&) noexcept;
@@ -124,10 +126,7 @@ TVector<T>::TVector(size_t size, T elem) noexcept : _used(size), _deleted(0) {
 
 template<typename T>
 TVector<T>::TVector(const TVector& other) noexcept : _used(other._used), _deleted(other._deleted), 
-_capacity(other._capacity) {
-	_data = new T[_capacity];
-	_states = new State[_capacity];
-
+_capacity(other._capacity), _data(new T[other._capacity]), _states(new State[other._capacity]) {
 	for (int i = 0; i < _used; i++) {
 		_data[i] = other._data[i];
 		_states[i] = other._states[i];
@@ -401,41 +400,107 @@ bool TVector<T>::is_empty() const noexcept {
 	return (_used - _deleted) > 0;
 }
 
-//template<typename T>
-//TVector<T>& TVector<T>::operator=(const TVector& other) noexcept {
-//	if (this != &other) { 
-//		delete[] _data;
-//		delete[] _used;
-//
-//		_capacity = other._capacity;
-//		_used = other._used;
-//		_deleted = other._deleted;
-//		_data = new T[_capacity];
-//		_states = new State[_capacity];
-//
-//		for (size_t i = 0; i < _used; ++i) {
-//			_data[i] = other._data[i];
-//		}
-//	}
-//	return *this;
-//}
-
 template<typename T>
-bool TVector<T>::operator==(const TVector<T>& other) const noexcept {
-	return _used == other._used && _deleted == other._deleted && _capacity == other._capacity;
+TVector<T>& TVector<T>::operator=(const TVector& other) noexcept {
+	if (this != &other) { 
+		delete[] _data;
+		delete[] _states;
+
+		_capacity = other._capacity;
+		_used = other._used;
+		_deleted = other._deleted;
+		_data = new T[_capacity];
+		_states = new State[_capacity];
+
+		for (size_t i = 0; i < _used; i++) {
+			_data[i] = other._data[i];
+			_states[i] = other._states[i];
+		}
+
+		for (size_t i = _used; i < _capacity; i++) {
+			_states[i] = Empty;
+		}
+	}
+
+	return *this;
 }
 
 template<typename T>
-T& TVector<T>::operator[](size_t index)
-{
-	if (index >= _used) {
-		throw std::out_of_range("Index out of range");
+TVector<T>& TVector<T>::operator=(TVector&& other) noexcept {
+	if (this != &other) {
+		delete[] _data;
+		delete[] _states;
+		_capacity = other._capacity;
+		_used = other._used;
+		_deleted = other._deleted;
+		_data = other._data;
+		other._data = nullptr;
+		_states = other._states;
+		other._states = nullptr;
+		other._capacity = 0;
+		other._used = 0;
+		other._deleted = 0;
 	}
 
-	for (int i = index; i < _used; i++) {
-		if (_states[i] == Busy)
-			return _data[i];
+	return *this;
+}
+
+template<typename T>
+bool TVector<T>::operator==(const TVector<T>& other) const noexcept {
+	if (size() != other.size()) 
+		return false;
+
+	for (size_t i = 0; i < size(); i++) {
+		if ((*this)[i] != other[i])
+			return false;
 	}
+
+	return true;
+}
+
+template<typename T>
+bool TVector<T>::operator!=(const TVector<T>& other) const noexcept {
+	return !(*this == other);
+}
+
+template<typename T>
+T& TVector<T>::operator[](size_t index) {
+	if (index >= _used) {
+		throw std::out_of_range("TVector operator[]: Index out of range.");
+	}
+
+	size_t current_index = 0;
+
+	for (size_t i = 0; i < _used; i++) {
+		if (_states[i] == Busy) {
+			if (current_index == index)
+				return _data[i];
+
+			current_index++;
+		}
+	}
+
+	throw std::out_of_range("TVector operator[]: Index out of range.");
+}
+
+template<typename T>
+const T& TVector<T>::operator[](size_t index) const {
+	if (index >= _used) {
+		throw std::out_of_range("TVector operator[]: Index out of range.");
+	}
+
+	size_t current_index = 0;
+
+	for (size_t i = 0; i < _used; i++) {
+		if (_states[i] == Busy) {
+			if (current_index == index)
+				return _data[i];
+
+			current_index++;
+		}
+	}
+
+	throw std::out_of_range("TVector operator[]: Not found.");
 }
 
 template<typename T>
