@@ -975,6 +975,7 @@ int search_end(TVector<U>& vec, bool(*check)(U)) noexcept {
 #pragma region IteratorsRealization
 template<typename T>
 TVector<T>::Iterator::Iterator(T* ptr, TVector<T>& parent) noexcept : _ptr(ptr), _parent(parent) {}
+
 template<typename T>
 TVector<T>::Iterator::Iterator(const Iterator& other) noexcept : _ptr(other._ptr), _parent(other._parent) {}
 
