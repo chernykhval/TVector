@@ -94,37 +94,6 @@ public:
 	T& operator[](size_t);
 	const T& operator[](size_t) const;
 
-	void set_color(int text_color, int bg_color) {
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, (bg_color << 4) | text_color);
-	}
-	void print() {
-		std::cout << "[";
-
-		for (int i = 0; i < _capacity; i++) {
-			std::cout << _data[i] << " (";
-			switch (_states[i])
-			{
-			case Busy:
-				set_color(2, 0);
-				std::cout << "B";
-				break;
-			case Empty:
-				set_color(7, 0);
-				std::cout << "E";
-				break;
-			case Deleted:
-				set_color(4, 0);
-				std::cout << "D";
-				break;
-			}
-
-			set_color(7, 0);
-			std::cout << ") ";
-		}
-		std::cout << "]" << std::endl;
-	}
-
 	template<typename U>
 	friend std::ostream& operator<<(std::ostream&, const TVector<U>&) noexcept;
 	template<typename U>
@@ -329,7 +298,7 @@ inline typename TVector<T>::Iterator TVector<T>::end() noexcept {
 
 template<typename T>
 void TVector<T>::push_back(const T& value) noexcept {
-	if (_states[_used - 1] == Deleted) {
+	if (_states != nullptr && _states[_used - 1] == Deleted) {
 		_data[_used - 1] = value;
 		_states[_used - 1] = Busy;
 		_deleted--;
@@ -347,7 +316,7 @@ void TVector<T>::push_back(const T& value) noexcept {
 
 template<typename T>
 void TVector<T>::push_back(T&& value) noexcept {
-	if (_states[_used - 1] == Deleted) {
+	if (_states != nullptr && _states[_used - 1] == Deleted) {
 		_data[_used - 1] = std::move(value);
 		_states[_used - 1] = Busy;
 		_deleted--;
@@ -365,7 +334,7 @@ void TVector<T>::push_back(T&& value) noexcept {
 
 template<typename T>
 void TVector<T>::push_front(const T& value) noexcept {
-	if (_states[0] == Deleted) {
+	if (_states != nullptr && _states[0] == Deleted) {
 		_data[0] = value;
 		_states[0] = Busy;
 		_deleted--;
@@ -387,7 +356,7 @@ void TVector<T>::push_front(const T& value) noexcept {
 
 template<typename T>
 void TVector<T>::push_front(T&& value) noexcept {
-	if (_states[0] == Deleted) {
+	if (_states != nullptr && _states[0] == Deleted) {
 		_data[0] = std::move(value);
 		_states[0] = Busy;
 		_deleted--;
