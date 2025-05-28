@@ -1,5 +1,6 @@
 // Copyright 2025 Chernykh Valentin
 #pragma once
+
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -14,7 +15,7 @@ enum State {
 
 template<typename T>
 class TVector {
-private: 
+ private: 
     T* _data;
     State* _states;
     size_t _capacity;
@@ -23,13 +24,13 @@ private:
     size_t _capacity_step = 15;
     float _removal_coefficient = 0.15f;
 
-public:
+ public:
 
     class Iterator {
-    private: 
+     private: 
         T* _ptr;
         TVector<T>& _parent;
-    public: 
+     public: 
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
         inline T& operator*();
@@ -50,7 +51,7 @@ public:
     };
 
     TVector() noexcept;
-    TVector(size_t) noexcept;
+    explicit TVector(size_t) noexcept;
     TVector(size_t, T) noexcept;
     TVector(const TVector&) noexcept;
     TVector(TVector&&) noexcept;
@@ -109,7 +110,7 @@ public:
     template<typename U>
     friend int search_end(TVector<U>&, bool(*check) (U)) noexcept;
 
-private: 
+ private:
     void reset_memory_for_delete() noexcept;
     void reset_memory(size_t) noexcept;
     Iterator reset_memory(size_t, const Iterator&) noexcept;
@@ -997,7 +998,7 @@ inline T* TVector<T>::Iterator::operator->() noexcept {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator& 
+inline typename TVector<T>::Iterator&
 TVector<T>::Iterator::operator=(const Iterator& other) noexcept {
     if (this != &other) {
         _ptr = other._ptr;
