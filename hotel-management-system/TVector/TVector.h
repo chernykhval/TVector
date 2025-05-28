@@ -14,8 +14,7 @@ enum State {
 
 template<typename T>
 class TVector {
-private:
-
+private: 
     T* _data;
     State* _states;
     size_t _capacity;
@@ -27,12 +26,10 @@ private:
 public:
 
     class Iterator {
-    private:
-
+    private: 
         T* _ptr;
         TVector<T>& _parent;
-    public:
-
+    public: 
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
         inline T& operator*();
@@ -112,8 +109,7 @@ public:
     template<typename U>
     friend int search_end(TVector<U>&, bool(*check) (U)) noexcept;
 
-private:
-
+private: 
     void reset_memory_for_delete() noexcept;
     void reset_memory(size_t) noexcept;
     Iterator reset_memory(size_t, const Iterator&) noexcept;
@@ -122,7 +118,8 @@ private:
     friend size_t partition(TVector<U>&, size_t,
         size_t, bool (*comp)(U, U))noexcept;
     template <typename U>
-    friend void quick_sort(TVector<U>&, size_t, size_t, bool (*comp)(U, U)) noexcept;
+    friend void quick_sort(TVector<U>&, size_t,
+        size_t, bool (*comp)(U, U)) noexcept;
     inline void swap_elem(size_t, size_t) noexcept;
 };
 
@@ -211,7 +208,7 @@ TVector<T>::TVector(std::initializer_list<T> init) noexcept
     if (init.size() <= 15)
         _capacity = _capacity_step * (init.size() > 0);
     else
-        _capacity = (init.size() / _capacity_step + 1) * 
+        _capacity = (init.size() / _capacity_step + 1) *
         _capacity_step * (init.size() > 0);
 
     _data = new T[_capacity];
@@ -1000,8 +997,8 @@ inline T* TVector<T>::Iterator::operator->() noexcept {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator& TVector<T>::Iterator::operator=(const Iterator& other)
-noexcept {
+inline typename TVector<T>::Iterator& 
+TVector<T>::Iterator::operator=(const Iterator& other) noexcept {
     if (this != &other) {
         _ptr = other._ptr;
         _parent = other._parent;
@@ -1025,7 +1022,7 @@ typename TVector<T>::Iterator& TVector<T>::Iterator::operator++() noexcept {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator TVector<T>::Iterator::operator++(int) 
+inline typename TVector<T>::Iterator TVector<T>::Iterator::operator++(int)
 noexcept {
     Iterator temp = *this;
     ++(*this);
@@ -1136,14 +1133,14 @@ typename TVector<T>::Iterator& TVector<T>::Iterator::operator-=(int num) {
 }
 
 template<typename T>
-inline bool TVector<T>::Iterator::operator!=(const Iterator& other
-    ) const noexcept {
+inline bool TVector<T>::Iterator::operator!=(const Iterator& other)
+const noexcept {
     return _ptr != other._ptr || _parent != other._parent;
 }
 
 template<typename T>
-inline bool TVector<T>::Iterator::operator==(const Iterator& other
-    ) const noexcept {
+inline bool TVector<T>::Iterator::operator==(const Iterator& other)
+const noexcept {
     return _ptr == other._ptr && _parent == other._parent;
 }
 
