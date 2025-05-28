@@ -1,7 +1,7 @@
 // Copyright 2025 Chernykh Valentin
 #pragma once
 #include <iostream>
-#include <stdexcept> 
+#include <stdexcept>
 #include <utility>
 #include <cstdlib>
 #include <limits>
@@ -15,6 +15,7 @@ enum State {
 template<typename T>
 class TVector {
 private:
+
     T* _data;
     State* _states;
     size_t _capacity;
@@ -24,11 +25,14 @@ private:
     float _removal_coefficient = 0.15f;
 
 public:
+
     class Iterator {
     private:
+
         T* _ptr;
         TVector<T>& _parent;
     public:
+
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
         inline T& operator*();
@@ -100,28 +104,31 @@ public:
     template<typename U>
     friend void shuffle(TVector<U>&) noexcept;
     template<typename U>
-    inline friend void tv_sort(TVector<U>&, bool (*comp)(U, U)) noexcept;
+    inline friend void tv_sort(TVector<U>&, bool(*comp)(U, U)) noexcept;
     template<typename U>
-    friend int* search_all(TVector<U>&, bool (*check) (U)) noexcept;
+    friend int* search_all(TVector<U>&, bool(*check) (U)) noexcept;
     template<typename U>
-    friend int search_begin(TVector<U>&, bool (*check) (U)) noexcept;
+    friend int search_begin(TVector<U>&, bool(*check) (U)) noexcept;
     template<typename U>
-    friend int search_end(TVector<U>&, bool (*check) (U)) noexcept;
+    friend int search_end(TVector<U>&, bool(*check) (U)) noexcept;
 
 private:
+
     void reset_memory_for_delete() noexcept;
     void reset_memory(size_t) noexcept;
     Iterator reset_memory(size_t, const Iterator&) noexcept;
     inline bool is_full() const noexcept;
     template <typename U>
-    friend size_t partition(TVector<U>&, size_t, size_t, bool (*comp)(U, U)) noexcept;
+    friend size_t partition(TVector<U>&, size_t,
+        size_t, bool (*comp)(U, U))noexcept;
     template <typename U>
     friend void quick_sort(TVector<U>&, size_t, size_t, bool (*comp)(U, U)) noexcept;
     inline void swap_elem(size_t, size_t) noexcept;
 };
 
 template<typename T>
-TVector<T>::TVector() noexcept : _data(nullptr), _states(nullptr), _capacity(0), _used(0), _deleted(0) {}
+TVector<T>::TVector() noexcept : _data(nullptr), _states(nullptr),
+_capacity(0), _used(0), _deleted(0) {}
 
 template<typename T>
 TVector<T>::TVector(size_t size) noexcept : _used(size), _deleted(0) {
@@ -156,8 +163,9 @@ TVector<T>::TVector(size_t size, T elem) noexcept : _used(size), _deleted(0) {
 }
 
 template<typename T>
-TVector<T>::TVector(const TVector& other) noexcept : _used(other._used), _deleted(other._deleted),
-_capacity(other._capacity), _data(new T[other._capacity]), _states(new State[other._capacity]) {
+TVector<T>::TVector(const TVector& other) noexcept : _used(other._used),
+_deleted(other._deleted), _capacity(other._capacity),
+_data(new T[other._capacity]), _states(new State[other._capacity]) {
     for (int i = 0; i < _used; i++) {
         _data[i] = other._data[i];
         _states[i] = other._states[i];
@@ -169,7 +177,8 @@ _capacity(other._capacity), _data(new T[other._capacity]), _states(new State[oth
 }
 
 template<typename T>
-TVector<T>::TVector(TVector&& other) noexcept : _used(other._used), _deleted(other._deleted),
+TVector<T>::TVector(TVector&& other) noexcept :
+    _used(other._used), _deleted(other._deleted),
 _capacity(other._capacity) {
     _states = other._states;
     other._states = nullptr;
@@ -197,11 +206,13 @@ TVector<T>::TVector(T* array, size_t size) : _used(size), _deleted(0) {
 }
 
 template<typename T>
-TVector<T>::TVector(std::initializer_list<T> init) noexcept : _used(init.size()), _deleted(0) {
+TVector<T>::TVector(std::initializer_list<T> init) noexcept
+    : _used(init.size()), _deleted(0) {
     if (init.size() <= 15)
         _capacity = _capacity_step * (init.size() > 0);
     else
-        _capacity = (init.size() / _capacity_step + 1) * _capacity_step * (init.size() > 0);
+        _capacity = (init.size() / _capacity_step + 1) * 
+        _capacity_step * (init.size() > 0);
 
     _data = new T[_capacity];
     _states = new State[_capacity];
@@ -378,7 +389,8 @@ void TVector<T>::push_front(T&& value) noexcept {
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::insert(Iterator position, const T& value) noexcept {
+typename TVector<T>::Iterator TVector<T>::insert(Iterator position,
+    const T& value) noexcept {
     if (!is_full()) {
         size_t insert_index = position.index();
 
@@ -411,7 +423,8 @@ typename TVector<T>::Iterator TVector<T>::insert(Iterator position, const T& val
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::insert(Iterator position, size_t n, const T& value) noexcept {
+typename TVector<T>::Iterator TVector<T>::insert(Iterator position,
+    size_t n, const T& value) noexcept {
     if (_capacity - _used >= n) {
         size_t insert_index = position.index();
 
@@ -420,8 +433,7 @@ typename TVector<T>::Iterator TVector<T>::insert(Iterator position, size_t n, co
             _states[i] = _states[i - n];
         }
 
-        for (size_t i = insert_index; i < insert_index + n; i++)
-        {
+        for (size_t i = insert_index; i < insert_index + n; i++) {
             _data[i] = value;
             _states[i] = Busy;
             _used++;
@@ -439,8 +451,7 @@ typename TVector<T>::Iterator TVector<T>::insert(Iterator position, size_t n, co
         _states[i] = _states[i - n];
     }
 
-    for (size_t i = insert_index; i < insert_index + n; i++)
-    {
+    for (size_t i = insert_index; i < insert_index + n; i++) {
         _data[i] = value;
         _states[i] = Busy;
         _used++;
@@ -451,7 +462,8 @@ typename TVector<T>::Iterator TVector<T>::insert(Iterator position, size_t n, co
 
 template<typename T>
 template<class ...Args>
-typename TVector<T>::Iterator TVector<T>::emplace(Iterator position, Args && ...args) {
+typename TVector<T>::Iterator TVector<T>::emplace(Iterator position,
+    Args && ...args) {
     if (!is_full()) {
         size_t insert_index = position.index();
 
@@ -484,7 +496,8 @@ typename TVector<T>::Iterator TVector<T>::emplace(Iterator position, Args && ...
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::insert(Iterator position, T&& value) noexcept {
+typename TVector<T>::Iterator TVector<T>::insert(Iterator position, T&& value)
+noexcept {
     if (!is_full()) {
         size_t insert_index = position.index();
 
@@ -623,15 +636,13 @@ void TVector<T>::resize(size_t new_size) {
         }
 
         _used = new_size;
-    }
-    else if (new_size > _used) {
+    } else if (new_size > _used) {
         for (size_t i = _used; i < new_size; i++) {
             _states[i] = Busy;
         }
 
         _used = new_size;
-    }
-    else {
+    } else {
         _used = new_size;
         reset_memory_for_delete();
     }
@@ -640,7 +651,6 @@ void TVector<T>::resize(size_t new_size) {
 template<typename T>
 inline bool TVector<T>::is_empty() const noexcept {
     return (_used - _deleted) > 0;
-
 }
 
 template<typename T>
@@ -815,7 +825,8 @@ void TVector<T>::reset_memory(size_t new_size) noexcept {
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::reset_memory(size_t new_size, const Iterator& insert_it) noexcept {
+typename TVector<T>::Iterator TVector<T>::reset_memory(size_t new_size,
+    const Iterator& insert_it) noexcept {
     size_t new_insert_index = insert_it.index();
     reset_memory(new_size);
 
@@ -828,7 +839,8 @@ inline bool TVector<T>::is_full() const noexcept {
 }
 
 template<typename T>
-inline void TVector<T>::swap_elem(size_t first_index, size_t second_index) noexcept {
+inline void TVector<T>::swap_elem(size_t first_index, size_t second_index)
+noexcept {
     T temp_elem = _data[first_index];
     _data[first_index] = _data[second_index];
     _data[second_index] = temp_elem;
@@ -840,7 +852,8 @@ inline void TVector<T>::swap_elem(size_t first_index, size_t second_index) noexc
 
 template<typename T>
 std::ostream& operator<<(std::ostream& stream, const TVector<T>& out) noexcept {
-    stream << "size(" << out._used << ") capacity(" << out._capacity << ") deleted(" << out._deleted << ") vector: [ ";
+    stream << "size(" << out._used << ") capacity(" <<
+        out._capacity << ") deleted(" << out._deleted << ") vector: [ ";
 
     size_t out_size = out.size() > 1000 ? 1000 : out.size();
 
@@ -864,7 +877,8 @@ void shuffle(TVector<U>& vec) noexcept {
 }
 
 template<typename U>
-void quick_sort(TVector<U>& vec, size_t low, size_t high, bool(*comp)(U, U))  noexcept {
+void quick_sort(TVector<U>& vec, size_t low, size_t high, bool(*comp)(U, U))
+noexcept {
     if (low < high) {
         size_t pivot_index = partition(vec, low, high, comp);
 
@@ -879,7 +893,8 @@ void quick_sort(TVector<U>& vec, size_t low, size_t high, bool(*comp)(U, U))  no
 }
 
 template<typename U>
-size_t partition(TVector<U>& vec, size_t low, size_t high, bool(*comp)(U, U)) noexcept {
+size_t partition(TVector<U>& vec, size_t low, size_t high, bool(*comp)(U, U))
+noexcept {
     size_t pivot_index = low + (high - low) / 2;
     U pivot = vec._data[pivot_index];
     vec.swap_elem(pivot_index, high);
@@ -915,8 +930,7 @@ int* search_all(TVector<U>& vec, bool(*check)(U)) noexcept {
                 search_result[index] = i - deleted_count;
                 index++;
             }
-        }
-        else {
+        } else {
             deleted_count++;
         }
     }
@@ -936,8 +950,7 @@ int search_begin(TVector<U>& vec, bool(*check)(U)) noexcept {
         if (vec._states[i] == Busy) {
             if (check(vec._data[i]))
                 return i - deleted_count;
-        }
-        else {
+        } else {
             deleted_count++;
         }
     }
@@ -961,10 +974,12 @@ int search_end(TVector<U>& vec, bool(*check)(U)) noexcept {
 
 #pragma region IteratorsRealization
 template<typename T>
-TVector<T>::Iterator::Iterator(T* ptr, TVector<T>& parent) noexcept : _ptr(ptr), _parent(parent) {}
+TVector<T>::Iterator::Iterator(T* ptr, TVector<T>& parent) noexcept
+    : _ptr(ptr), _parent(parent) {}
 
 template<typename T>
-TVector<T>::Iterator::Iterator(const Iterator& other) noexcept : _ptr(other._ptr), _parent(other._parent) {}
+TVector<T>::Iterator::Iterator(const Iterator& other) noexcept
+    : _ptr(other._ptr), _parent(other._parent) {}
 
 template <typename T>
 inline T& TVector<T>::Iterator::operator*() {
@@ -985,7 +1000,8 @@ inline T* TVector<T>::Iterator::operator->() noexcept {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator& TVector<T>::Iterator::operator=(const Iterator& other) noexcept {
+inline typename TVector<T>::Iterator& TVector<T>::Iterator::operator=(const Iterator& other)
+noexcept {
     if (this != &other) {
         _ptr = other._ptr;
         _parent = other._parent;
@@ -1009,7 +1025,8 @@ typename TVector<T>::Iterator& TVector<T>::Iterator::operator++() noexcept {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator TVector<T>::Iterator::operator++(int) noexcept {
+inline typename TVector<T>::Iterator TVector<T>::Iterator::operator++(int) 
+noexcept {
     Iterator temp = *this;
     ++(*this);
 
@@ -1031,7 +1048,8 @@ typename TVector<T>::Iterator& TVector<T>::Iterator::operator--() noexcept {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator TVector<T>::Iterator::operator--(int) noexcept {
+inline typename TVector<T>::Iterator TVector<T>::Iterator::operator--(int)
+noexcept {
     Iterator temp = *this;
     --(*this);
     return temp;
@@ -1118,12 +1136,14 @@ typename TVector<T>::Iterator& TVector<T>::Iterator::operator-=(int num) {
 }
 
 template<typename T>
-inline bool TVector<T>::Iterator::operator!=(const Iterator& other) const noexcept {
+inline bool TVector<T>::Iterator::operator!=(const Iterator& other
+    ) const noexcept {
     return _ptr != other._ptr || _parent != other._parent;
 }
 
 template<typename T>
-inline bool TVector<T>::Iterator::operator==(const Iterator& other) const noexcept {
+inline bool TVector<T>::Iterator::operator==(const Iterator& other
+    ) const noexcept {
     return _ptr == other._ptr && _parent == other._parent;
 }
 
