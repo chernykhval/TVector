@@ -24,15 +24,28 @@ class TVector {
     float _removal_coefficient = 0.15f;
 
  public:
+    using value_type = T;               // Тип элементов
+    using reference = T&;                // Ссылка на элемент
+    using const_reference = const T&;    // Константная ссылка на элемент
+    using pointer = T*;                  // Указатель на элемент
+    using const_pointer = const T*;      // Константный указатель на элемент
+    using size_type = std::size_t;       // Тип для размера
+    using difference_type = std::ptrdiff_t; // Тип для разницы между итераторами
 
     class Iterator {
     private:
         T* _ptr;
         TVector<T>& _parent;
     public:
+        using iterator_category = std::random_access_iterator_tag;
+        using value_type = TVector::value_type;
+        using reference = TVector::reference;
+        using pointer = TVector::pointer;
+        using difference_type = TVector::difference_type;
+
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
-        inline T& operator*();
+        inline reference operator*();
         inline T* operator->() noexcept;
         inline Iterator& operator=(const Iterator&) noexcept;
         Iterator& operator++() noexcept;
@@ -48,6 +61,8 @@ class TVector {
         ptrdiff_t operator-(const Iterator&) const;
         inline ptrdiff_t index() const noexcept;
     };
+
+    using const_iterator = const Iterator;
 
     TVector() noexcept;
     explicit TVector(size_t) noexcept;
@@ -991,7 +1006,7 @@ TVector<T>::Iterator::Iterator(const Iterator& other) noexcept
     : _ptr(other._ptr), _parent(other._parent) {}
 
 template <typename T>
-inline T& TVector<T>::Iterator::operator*() {
+inline typename TVector<T>::reference TVector<T>::Iterator::operator*() {
     if (_ptr == nullptr) {
         throw std::out_of_range("Iterator operator*: Nullptr.");
     }
@@ -1159,7 +1174,7 @@ const noexcept {
 template<typename T>
 ptrdiff_t TVector<T>::Iterator::operator-(const Iterator& other) const {
     if (&_parent != &other._parent)
-        throw std::runtime_error("Iterator operator-: Diffrent parrents");
+        throw std::runtime_error("Iterator operator-: Different parents");
 
     int reverse = _ptr < other._ptr ? -1 : 1;
     Iterator left = _ptr < other._ptr ? *this : other;
