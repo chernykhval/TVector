@@ -65,12 +65,12 @@ class TVector {
     using const_iterator = const Iterator;
 
     TVector() noexcept;
-    explicit TVector(size_t) noexcept;
-    TVector(size_t, T) noexcept;
+    explicit TVector(size_type) noexcept;
+    TVector(size_type, value_type) noexcept;
     TVector(const TVector&) noexcept;
     TVector(TVector&&) noexcept;
-    TVector(T*, size_t);
-    TVector(std::initializer_list<T>) noexcept;
+    TVector(pointer, size_type);
+    TVector(std::initializer_list<value_type>) noexcept;
     ~TVector() noexcept;
 
     inline T* data() noexcept;
@@ -143,33 +143,33 @@ TVector<T>::TVector() noexcept : _data(nullptr), _states(nullptr),
 _capacity(0), _used(0), _deleted(0) {}
 
 template<typename T>
-TVector<T>::TVector(size_t size) noexcept : _used(size), _deleted(0) {
+TVector<T>::TVector(size_type size) noexcept : _used(size), _deleted(0) {
     _capacity = (size / _capacity_step + 1) * _capacity_step * (size > 0);
     _data = new T[_capacity];
     _states = new State[_capacity];
 
-    for (int i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         _data[i] = T();
         _states[i] = Busy;
     }
 
-    for (int i = _used; i < _capacity; i++) {
+    for (size_type i = _used; i < _capacity; i++) {
         _states[i] = Empty;
     }
 }
 
 template<typename T>
-TVector<T>::TVector(size_t size, T elem) noexcept : _used(size), _deleted(0) {
+TVector<T>::TVector(size_type size, value_type elem) noexcept : _used(size), _deleted(0) {
     _capacity = (size / _capacity_step + 1) * _capacity_step * (size > 0);
     _data = new T[_capacity];
     _states = new State[_capacity];
 
-    for (int i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         _data[i] = elem;
         _states[i] = Busy;
     }
 
-    for (int i = _used; i < _capacity; i++) {
+    for (size_type i = _used; i < _capacity; i++) {
         _states[i] = Empty;
     }
 }
@@ -202,23 +202,23 @@ _capacity(other._capacity) {
 }
 
 template<typename T>
-TVector<T>::TVector(T* array, size_t size) : _used(size), _deleted(0) {
+TVector<T>::TVector(pointer array, size_type size) : _used(size), _deleted(0) {
     _capacity = (size / _capacity_step + 1) * _capacity_step * (size > 0);
     _data = new T[_capacity];
     _states = new State[_capacity];
 
-    for (int i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         _data[i] = array[i];
         _states[i] = Busy;
     }
 
-    for (int i = _used; i < _capacity; i++) {
+    for (size_type i = _used; i < _capacity; i++) {
         _states[i] = Empty;
     }
 }
 
 template<typename T>
-TVector<T>::TVector(std::initializer_list<T> init) noexcept
+TVector<T>::TVector(std::initializer_list<value_type> init) noexcept
     : _used(init.size()), _deleted(0) {
     if (init.size() <= 15)
         _capacity = _capacity_step * (init.size() > 0);
