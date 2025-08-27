@@ -46,7 +46,7 @@ class TVector {
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
         inline reference operator*();
-        inline T* operator->() noexcept;
+        inline pointer operator->() noexcept;
         inline Iterator& operator=(const Iterator&) noexcept;
         Iterator& operator++() noexcept;
         inline Iterator operator++(int) noexcept;
@@ -58,8 +58,8 @@ class TVector {
         Iterator& operator-=(int);
         inline bool operator!=(const Iterator&) const noexcept;
         inline bool operator==(const Iterator&) const noexcept;
-        ptrdiff_t operator-(const Iterator&) const;
-        inline ptrdiff_t index() const noexcept;
+        difference_type operator-(const Iterator&) const;
+        inline difference_type index() const noexcept;
     };
 
     using const_iterator = const Iterator;
@@ -1019,7 +1019,7 @@ inline typename TVector<T>::reference TVector<T>::Iterator::operator*() {
 }
 
 template<typename T>
-inline T* TVector<T>::Iterator::operator->() noexcept {
+inline typename TVector<T>::Iterator::pointer TVector<T>::Iterator::operator->() noexcept {
     return _ptr;
 }
 
@@ -1172,7 +1172,7 @@ const noexcept {
 }
 
 template<typename T>
-ptrdiff_t TVector<T>::Iterator::operator-(const Iterator& other) const {
+typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::operator-(const Iterator& other) const {
     if (&_parent != &other._parent)
         throw std::runtime_error("Iterator operator-: Different parents");
 
@@ -1195,7 +1195,7 @@ ptrdiff_t TVector<T>::Iterator::operator-(const Iterator& other) const {
 }
 
 template<typename T>
-inline ptrdiff_t TVector<T>::Iterator::index() const noexcept {
+inline typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::index() const noexcept {
     return _ptr - _parent._data;
 }
 #pragma endregion
