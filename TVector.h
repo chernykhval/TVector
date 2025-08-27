@@ -85,13 +85,13 @@ class TVector {
     inline Iterator begin() noexcept;
     inline Iterator end() noexcept;
 
-    void push_back(const T&) noexcept;
-    void push_back(T&&) noexcept;
-    void push_front(const T&) noexcept;
-    void push_front(T&&) noexcept;
-    Iterator insert(Iterator, const T&) noexcept;
-    Iterator insert(Iterator position, size_t n, const T& value) noexcept;
-    Iterator insert(Iterator, T&&) noexcept;
+    void push_back(const value_type&) noexcept;
+    void push_back(value_type&&) noexcept;
+    void push_front(const value_type&) noexcept;
+    void push_front(value_type&&) noexcept;
+    Iterator insert(Iterator, const value_type&) noexcept;
+    Iterator insert(Iterator position, size_type n, const value_type& value) noexcept;
+    Iterator insert(Iterator, value_type&&) noexcept;
     template <class... Args>
     Iterator emplace(Iterator position, Args&&... args);
     void pop_back();
@@ -333,7 +333,7 @@ inline typename TVector<T>::Iterator TVector<T>::end() noexcept {
 }
 
 template<typename T>
-void TVector<T>::push_back(const T& value) noexcept {
+void TVector<T>::push_back(const value_type& value) noexcept {
     if (_states != nullptr && _states[_used - 1] == Deleted) {
         _data[_used - 1] = value;
         _states[_used - 1] = Busy;
@@ -351,7 +351,7 @@ void TVector<T>::push_back(const T& value) noexcept {
 }
 
 template<typename T>
-void TVector<T>::push_back(T&& value) noexcept {
+void TVector<T>::push_back(value_type&& value) noexcept {
     if (_states != nullptr && _states[_used - 1] == Deleted) {
         _data[_used - 1] = std::move(value);
         _states[_used - 1] = Busy;
@@ -369,7 +369,7 @@ void TVector<T>::push_back(T&& value) noexcept {
 }
 
 template<typename T>
-void TVector<T>::push_front(const T& value) noexcept {
+void TVector<T>::push_front(const value_type& value) noexcept {
     if (_states != nullptr && _states[0] == Deleted) {
         _data[0] = value;
         _states[0] = Busy;
@@ -391,7 +391,7 @@ void TVector<T>::push_front(const T& value) noexcept {
 }
 
 template<typename T>
-void TVector<T>::push_front(T&& value) noexcept {
+void TVector<T>::push_front(value_type&& value) noexcept {
     if (_states != nullptr && _states[0] == Deleted) {
         _data[0] = std::move(value);
         _states[0] = Busy;
@@ -414,7 +414,7 @@ void TVector<T>::push_front(T&& value) noexcept {
 
 template<typename T>
 typename TVector<T>::Iterator TVector<T>::insert(Iterator position,
-    const T& value) noexcept {
+    const value_type& value) noexcept {
     if (!is_full()) {
         size_t insert_index = position.index();
 
@@ -448,16 +448,16 @@ typename TVector<T>::Iterator TVector<T>::insert(Iterator position,
 
 template<typename T>
 typename TVector<T>::Iterator TVector<T>::insert(Iterator position,
-    size_t n, const T& value) noexcept {
+    size_type n, const value_type& value) noexcept {
     if (_capacity - _used >= n) {
-        size_t insert_index = position.index();
+        size_type insert_index = position.index();
 
-        for (size_t i = _used + n - 1; i >= insert_index + n; i--) {
+        for (size_type i = _used + n - 1; i >= insert_index + n; i--) {
             _data[i] = _data[i - n];
             _states[i] = _states[i - n];
         }
 
-        for (size_t i = insert_index; i < insert_index + n; i++) {
+        for (size_type i = insert_index; i < insert_index + n; i++) {
             _data[i] = value;
             _states[i] = Busy;
             _used++;
@@ -520,7 +520,7 @@ typename TVector<T>::Iterator TVector<T>::emplace(Iterator position,
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::insert(Iterator position, T&& value)
+typename TVector<T>::Iterator TVector<T>::insert(Iterator position, value_type&& value)
 noexcept {
     if (!is_full()) {
         size_t insert_index = position.index();
