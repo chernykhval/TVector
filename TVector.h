@@ -73,15 +73,15 @@ class TVector {
     TVector(std::initializer_list<value_type>) noexcept;
     ~TVector() noexcept;
 
-    inline T* data() noexcept;
-    inline const T* data() const noexcept;
+    inline pointer data() noexcept;
+    inline const_pointer data() const noexcept;
     inline State* states() noexcept;
     inline const State* states() const noexcept;
-    inline size_t size() const noexcept;
-    inline size_t used() const noexcept;
-    inline size_t capacity() const noexcept;
-    inline T& front();
-    inline T& back();
+    inline size_type size() const noexcept;
+    inline size_type used() const noexcept;
+    inline size_type capacity() const noexcept;
+    inline reference front();
+    inline reference back();
     inline Iterator begin() noexcept;
     inline Iterator end() noexcept;
 
@@ -249,27 +249,27 @@ TVector<T>::~TVector() noexcept {
 }
 
 template<typename T>
-inline T* TVector<T>::data() noexcept {
+inline typename TVector<T>::pointer TVector<T>::data() noexcept {
     return _data;
 }
 
 template<typename T>
-inline const T* TVector<T>::data() const noexcept {
+inline typename TVector<T>::const_pointer TVector<T>::data() const noexcept {
     return _data;
 }
 
 template<typename T>
-inline size_t TVector<T>::size() const noexcept {
+inline typename TVector<T>::size_type TVector<T>::size() const noexcept {
     return _used - _deleted;
 }
 
 template<typename T>
-inline size_t TVector<T>::capacity() const noexcept {
+inline typename TVector<T>::size_type TVector<T>::capacity() const noexcept {
     return _capacity;
 }
 
 template<typename T>
-inline T& TVector<T>::front() {
+inline typename TVector<T>::reference TVector<T>::front() {
     if (is_empty()) {
         throw std::runtime_error("front() called on empty TVector");
     }
@@ -283,7 +283,7 @@ inline T& TVector<T>::front() {
 }
 
 template<typename T>
-inline T& TVector<T>::back() {
+inline typename TVector<T>::reference TVector<T>::back() {
     if (is_empty()) {
         throw std::runtime_error("back() called on empty TVector");
     }
