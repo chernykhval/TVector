@@ -659,7 +659,7 @@ void TVector<T>::resize(size_t new_size) {
 
 template<typename T>
 inline bool TVector<T>::is_empty() const noexcept {
-    return (_used - _deleted) > 0;
+    return (_used - _deleted) == 0;
 }
 
 template<typename T>
