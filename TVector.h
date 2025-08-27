@@ -6,6 +6,7 @@
 #include <utility>
 #include <cstdlib>
 #include <limits>
+#include <ctime>
 
 enum State {
     Empty,
@@ -530,7 +531,7 @@ noexcept {
 template<typename T>
 void TVector<T>::pop_back() {
     if (_states == nullptr || _data == nullptr)
-        throw std::exception("Pop with empty vector");
+        throw std::runtime_error("Pop with empty vector");
 
     size_t remove_index = _used - 1;
 
@@ -552,7 +553,7 @@ void TVector<T>::pop_back() {
 template<typename T>
 void TVector<T>::pop_front() {
     if (_states == nullptr || _data == nullptr)
-        throw std::exception("Pop with empty vector");
+        throw std::runtime_error("Pop with empty vector");
 
     size_t remove_index = 0;
 
@@ -574,7 +575,7 @@ void TVector<T>::pop_front() {
 template<typename T>
 typename TVector<T>::Iterator TVector<T>::erase(Iterator position) {
     if (_states == nullptr || _data == nullptr)
-        throw std::exception("Erase with empty vector");
+        throw std::runtime_error("Erase with empty vector");
 
     size_t deleted_index = position.index();
     _states[deleted_index] = Deleted;
@@ -1148,7 +1149,7 @@ const noexcept {
 template<typename T>
 ptrdiff_t TVector<T>::Iterator::operator-(const Iterator& other) const {
     if (&_parent != &other._parent)
-        throw std::exception("Iterator operator-: Diffrent parrents");
+        throw std::runtime_error("Iterator operator-: Diffrent parrents");
 
     int reverse = _ptr < other._ptr ? -1 : 1;
     Iterator left = _ptr < other._ptr ? *this : other;
