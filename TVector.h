@@ -99,17 +99,17 @@ class TVector {
     Iterator erase(Iterator);
 
     TVector& assign(const TVector&);
-    T& at(size_t);
+    reference at(size_type);
     inline void clear() noexcept;
     void shrink_to_fit();
-    void resize(size_t);
+    void resize(size_type);
     inline bool is_empty() const noexcept;
     TVector& operator=(const TVector&) noexcept;
     TVector& operator=(TVector&&) noexcept;
-    bool operator==(const TVector<T>&) const noexcept;
-    bool operator!=(const TVector<T>&) const noexcept;
-    T& operator[](size_t);
-    const T& operator[](size_t) const;
+    bool operator==(const TVector<value_type>&) const noexcept;
+    bool operator!=(const TVector<value_type>&) const noexcept;
+    reference operator[](size_type);
+    const_reference operator[](size_type) const;
 
     template<typename U>
     friend std::ostream& operator<<(std::ostream&, const TVector<U>&) noexcept;
@@ -126,16 +126,16 @@ class TVector {
 
  private:
     void reset_memory_for_delete() noexcept;
-    void reset_memory(size_t) noexcept;
-    Iterator reset_memory(size_t, const Iterator&) noexcept;
+    void reset_memory(size_type) noexcept;
+    Iterator reset_memory(size_type, const Iterator&) noexcept;
     inline bool is_full() const noexcept;
     template <typename U>
-    friend size_t partition(TVector<U>&, size_t,
-        size_t, bool (*comp)(U, U))noexcept;
+    friend size_t partition(TVector<U>&, size_type,
+        size_type, bool (*comp)(U, U))noexcept;
     template <typename U>
-    friend void quick_sort(TVector<U>&, size_t,
-        size_t, bool (*comp)(U, U)) noexcept;
-    inline void swap_elem(size_t, size_t) noexcept;
+    friend void quick_sort(TVector<U>&, size_type,
+        size_type, bool (*comp)(U, U)) noexcept;
+    inline void swap_elem(size_type, size_type) noexcept;
 };
 
 template<typename T>
@@ -650,18 +650,18 @@ void TVector<T>::shrink_to_fit() {
 }
 
 template<typename T>
-void TVector<T>::resize(size_t new_size) {
+void TVector<T>::resize(size_type new_size) {
     reset_memory_for_delete();
 
     if (new_size > _capacity) {
         reset_memory(new_size);
-        for (size_t i = _used; i < new_size; i++) {
+        for (size_type i = _used; i < new_size; i++) {
             _states[i] = Busy;
         }
 
         _used = new_size;
     } else if (new_size > _used) {
-        for (size_t i = _used; i < new_size; i++) {
+        for (size_type i = _used; i < new_size; i++) {
             _states[i] = Busy;
         }
 
@@ -723,11 +723,11 @@ TVector<T>& TVector<T>::operator=(TVector&& other) noexcept {
 }
 
 template<typename T>
-bool TVector<T>::operator==(const TVector<T>& other) const noexcept {
+bool TVector<T>::operator==(const TVector<value_type>& other) const noexcept {
     if (size() != other.size())
         return false;
 
-    for (size_t i = 0; i < size(); i++) {
+    for (size_type i = 0; i < size(); i++) {
         if ((*this)[i] != other[i])
             return false;
     }
@@ -736,12 +736,12 @@ bool TVector<T>::operator==(const TVector<T>& other) const noexcept {
 }
 
 template<typename T>
-bool TVector<T>::operator!=(const TVector<T>& other) const noexcept {
+bool TVector<T>::operator!=(const TVector<value_type>& other) const noexcept {
     return !(*this == other);
 }
 
 template<typename T>
-T& TVector<T>::operator[](size_t index) {
+typename TVector<T>::reference TVector<T>::operator[](size_type index) {
     if (index >= _used) {
         throw std::out_of_range("TVector operator[]: Index out of range.");
     }
@@ -750,9 +750,9 @@ T& TVector<T>::operator[](size_t index) {
         return _data[index];
     }
 
-    size_t current_index = 0;
+    size_type current_index = 0;
 
-    for (size_t i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         if (_states[i] == Busy) {
             if (current_index == index)
                 return _data[i];
@@ -765,7 +765,7 @@ T& TVector<T>::operator[](size_t index) {
 }
 
 template<typename T>
-const T& TVector<T>::operator[](size_t index) const {
+typename TVector<T>::const_reference TVector<T>::operator[](size_type index) const {
     if (index >= _used) {
         throw std::out_of_range("TVector operator[]: Index out of range.");
     }
@@ -774,9 +774,9 @@ const T& TVector<T>::operator[](size_t index) const {
         return _data[index];
     }
 
-    size_t current_index = 0;
+    size_type current_index = 0;
 
-    for (size_t i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         if (_states[i] == Busy) {
             if (current_index == index)
                 return _data[i];
@@ -790,13 +790,13 @@ const T& TVector<T>::operator[](size_t index) const {
 
 template<typename T>
 void TVector<T>::reset_memory_for_delete() noexcept {
-    size_t correct_size = size();
-    size_t new_capacity = (correct_size / _capacity_step + 1) * _capacity_step;
+    size_type correct_size = size();
+    size_type new_capacity = (correct_size / _capacity_step + 1) * _capacity_step;
     T* new_data = new T[new_capacity];
     State* new_states = new State[new_capacity];
-    size_t index = 0;
+    size_type index = 0;
 
-    for (size_t i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         if (_states[i] == Busy) {
             new_data[index] = _data[i];
             new_states[index] = Busy;
@@ -804,7 +804,7 @@ void TVector<T>::reset_memory_for_delete() noexcept {
         }
     }
 
-    for (size_t i = index; i < new_capacity; i++) {
+    for (size_type i = index; i < new_capacity; i++) {
         new_data[i] = T();
         new_states[i] = Empty;
     }
@@ -819,14 +819,14 @@ void TVector<T>::reset_memory_for_delete() noexcept {
 }
 
 template<typename T>
-void TVector<T>::reset_memory(size_t new_size) noexcept {
-    size_t size_diff = new_size - size();
-    size_t new_capacity = (new_size / _capacity_step + 1) * _capacity_step;
+void TVector<T>::reset_memory(size_type new_size) noexcept {
+    size_type size_diff = new_size - size();
+    size_type new_capacity = (new_size / _capacity_step + 1) * _capacity_step;
     T* new_data = new T[new_capacity];
     State* new_states = new State[new_capacity];
-    size_t index = 0;
+    size_type index = 0;
 
-    for (size_t i = 0; i < _used; i++) {
+    for (size_type i = 0; i < _used; i++) {
         if (_states[i] == Busy) {
             new_data[index] = _data[i];
             new_states[index] = Busy;
@@ -834,7 +834,7 @@ void TVector<T>::reset_memory(size_t new_size) noexcept {
         }
     }
 
-    for (size_t i = index; i < new_capacity; i++) {
+    for (size_type i = index; i < new_capacity; i++) {
         new_data[i] = T();
         new_states[i] = Empty;
     }
@@ -849,9 +849,9 @@ void TVector<T>::reset_memory(size_t new_size) noexcept {
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::reset_memory(size_t new_size,
+typename TVector<T>::Iterator TVector<T>::reset_memory(size_type new_size,
     const Iterator& insert_it) noexcept {
-    size_t new_insert_index = insert_it.index();
+    size_type new_insert_index = insert_it.index();
     reset_memory(new_size);
 
     return Iterator(&_data[new_insert_index], *this);
@@ -863,7 +863,7 @@ inline bool TVector<T>::is_full() const noexcept {
 }
 
 template<typename T>
-inline void TVector<T>::swap_elem(size_t first_index, size_t second_index)
+inline void TVector<T>::swap_elem(size_type first_index, size_type second_index)
 noexcept {
     T temp_elem = _data[first_index];
     _data[first_index] = _data[second_index];
