@@ -4,8 +4,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-#include <cstdlib>
-#include <limits>
 #include <ctime>
 
 enum State {
@@ -28,10 +26,10 @@ class TVector {
  public:
 
     class Iterator {
-     private: 
+    private:
         T* _ptr;
         TVector<T>& _parent;
-     public: 
+    public:
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
         inline T& operator*();
@@ -67,8 +65,8 @@ class TVector {
     inline size_t size() const noexcept;
     inline size_t used() const noexcept;
     inline size_t capacity() const noexcept;
-    inline T& front() noexcept;
-    inline T& back() noexcept;
+    inline T& front();
+    inline T& back();
     inline Iterator begin() noexcept;
     inline Iterator end() noexcept;
 
@@ -256,19 +254,31 @@ inline size_t TVector<T>::capacity() const noexcept {
 }
 
 template<typename T>
-inline T& TVector<T>::front() noexcept {
-    for (int i = 0; i < _used; i++) {
+inline T& TVector<T>::front() {
+    if (is_empty()) {
+        throw std::runtime_error("front() called on empty TVector");
+    }
+
+    for (size_t i = 0; i < _used; i++) {
         if (_states[i] == Busy)
             return _data[i];
     }
+
+    throw std::runtime_error("TVector internal state corrupted: no busy elements found");
 }
 
 template<typename T>
-inline T& TVector<T>::back() noexcept {
-    for (int i = _used - 1; i >= 0; i--) {
-        if (_states[i] == Busy)
-            return _data[i];
+inline T& TVector<T>::back() {
+    if (is_empty()) {
+        throw std::runtime_error("back() called on empty TVector");
     }
+
+    for (size_t i = _used; i > 0; i--) {
+        if (_states[i - 1] == Busy)
+            return _data[i - 1];
+    }
+
+    throw std::runtime_error("TVector internal state corrupted: no busy elements found");
 }
 
 template<typename T>
