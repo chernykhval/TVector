@@ -60,6 +60,11 @@ class TVector {
         inline bool operator==(const Iterator&) const noexcept;
         difference_type operator-(const Iterator&) const;
         inline difference_type index() const noexcept;
+        bool operator<(const Iterator&) const noexcept;
+        bool operator>(const Iterator&) const noexcept;
+        bool operator<=(const Iterator&) const noexcept;
+        bool operator>=(const Iterator&) const noexcept;
+        reference operator[](difference_type);
     };
 
     using const_iterator = const Iterator;
@@ -1197,5 +1202,47 @@ typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::operator-(c
 template<typename T>
 inline typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::index() const noexcept {
     return _ptr - _parent._data;
+}
+
+template<typename T>
+bool TVector<T>::Iterator::operator<(const Iterator& other) const noexcept {
+    return _ptr < other._ptr;
+}
+
+template<typename T>
+bool TVector<T>::Iterator::operator>(const Iterator& other) const noexcept {
+    return _ptr > other._ptr;
+}
+
+template<typename T>
+bool TVector<T>::Iterator::operator<=(const Iterator& other) const noexcept {
+    return _ptr <= other._ptr;
+}
+
+template<typename T>
+bool TVector<T>::Iterator::operator>=(const Iterator& other) const noexcept {
+    return _ptr >= other._ptr;
+}
+
+template<typename T>
+typename TVector<T>::Iterator::reference TVector<T>::Iterator::operator[](difference_type n) {
+    if (n < 0) {
+        throw std::out_of_range("Negative index not allowed");
+    }
+
+    Iterator tmp = *this;
+    difference_type count = 0;
+
+    while (tmp != _parent.end()) {
+        if (_parent._states[tmp.index()] == Busy) {
+            if (count == n) {
+                return *tmp;
+            }
+            count++;
+        }
+        ++tmp;
+    }
+
+    throw std::runtime_error("Element not found");
 }
 #pragma endregion
