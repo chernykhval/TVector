@@ -84,7 +84,7 @@ void print_final_info() {
             (count_failed > 1 ? "s." : ".") << std::endl;
     }
 }
-};
+}; // namespace TestSystem
 
 #pragma region TvectorTests
 
@@ -162,15 +162,16 @@ bool tvector_move_init() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)0, vec_1.size()) &&
-        TestSystem::check_exp((size_t)0, vec_1.capacity()) &&
-        TestSystem::check_exp((size_t)25, vec_2.size()) &&
-        TestSystem::check_exp((size_t)30, vec_2.capacity());
+        TestSystem::check_exp(static_cast<size_t>(0), vec_1.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(0), vec_1.capacity()) &&
+        TestSystem::check_exp(static_cast<size_t>(25), vec_2.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec_2.capacity());
 }
 bool tvector_array_init() {
     bool actual_result = true;
     bool expected_result = true;
-    int* array = new int[16] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    int* array = new int[16] { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     TVector<int> vec(array, 16);
 
     if (vec.data() == nullptr || vec.begin() == vec.end()) {
@@ -178,27 +179,29 @@ bool tvector_array_init() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, vec.size()) &&
-        TestSystem::check_exp((size_t)30, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec.capacity());
 }
 bool tvector_initialize_list_init() {
     bool actual_result = true;
     bool expected_result = true;
-    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
 
     if (vec.data() == nullptr || vec.begin() == vec.end()) {
         actual_result = false;
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, vec.size()) &&
-        TestSystem::check_exp((size_t)30, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec.capacity());
 }
 
 bool tvector_operator_copy_assign() {
     bool actual_result = true;
     bool expected_result = true;
-    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     TVector<int> vec_2;
 
     vec_2 = vec_1;
@@ -212,15 +215,16 @@ bool tvector_operator_copy_assign() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, vec_1.size()) &&
-        TestSystem::check_exp((size_t)30, vec_1.capacity()) &&
-        TestSystem::check_exp((size_t)16, vec_2.size()) &&
-        TestSystem::check_exp((size_t)30, vec_2.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), vec_1.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec_1.capacity()) &&
+        TestSystem::check_exp(static_cast<size_t>(16), vec_2.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec_2.capacity());
 }
 bool tvector_operator_move_assign() {
     bool actual_result = true;
     bool expected_result = true;
-    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     TVector<int> vec_2;
 
     vec_2 = std::move(vec_1);
@@ -234,16 +238,18 @@ bool tvector_operator_move_assign() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)0, vec_1.size()) &&
-        TestSystem::check_exp((size_t)0, vec_1.capacity()) &&
-        TestSystem::check_exp((size_t)16, vec_2.size()) &&
-        TestSystem::check_exp((size_t)30, vec_2.capacity());
+        TestSystem::check_exp(static_cast<size_t>(0), vec_1.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(0), vec_1.capacity()) &&
+        TestSystem::check_exp(static_cast<size_t>(16), vec_2.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec_2.capacity());
 }
 bool tvector_operator_equality() {
     bool actual_result = true;
     bool expected_result = true;
-    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-    TVector<int> vec_2 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec_2 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
 
     actual_result = vec_1 == vec_2;
 
@@ -252,15 +258,18 @@ bool tvector_operator_equality() {
 bool tvector_operator_inequality() {
     bool actual_result = true;
     bool expected_result = true;
-    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-    TVector<int> vec_2 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17 };
+    TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec_2 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 17 };
 
     actual_result = vec_1 != vec_2;
 
     return TestSystem::check_exp(expected_result, actual_result);
 }
 bool tvector_operator_index_access() {
-    const TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    const TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     int actual_result = vec_1[13];
     int expected_result = 14;
 
@@ -269,7 +278,8 @@ bool tvector_operator_index_access() {
 bool tvector_operator_index_access_exception() {
     bool actual_result = true;
     bool expected_result = false;
-    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
 
     int num;
 
@@ -284,7 +294,8 @@ bool tvector_operator_index_access_exception() {
     return TestSystem::check_exp(expected_result, actual_result);
 }
 bool tvector_const_operator_index_access() {
-    const TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    const TVector<int> vec_1 = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     int actual_result = vec_1[13];
     int expected_result = 14;
 
@@ -293,7 +304,8 @@ bool tvector_const_operator_index_access() {
 bool tvector_const_operator_index_access_exception() {
     bool actual_result = true;
     bool expected_result = false;
-    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
 
     try {
         int num = vec[17];
@@ -307,14 +319,16 @@ bool tvector_const_operator_index_access_exception() {
 }
 
 bool tvector_data() {
-    const TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    const TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     int actual_result = *vec.data();
     int expected_result = 1;
 
     return TestSystem::check_exp(expected_result, actual_result);
 }
 bool tvector_const_data() {
-    const TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    const TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     int actual_result = *vec.data();
     int expected_result = 1;
 
@@ -349,7 +363,8 @@ bool tvector_back() {
     return TestSystem::check_exp(expected_result, actual_result);
 }
 bool tvector_begin() {
-    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     TVector<int>::Iterator it = vec.begin();
 
     int actual_result = *it;
@@ -358,7 +373,8 @@ bool tvector_begin() {
     return TestSystem::check_exp(expected_result, actual_result);
 }
 bool tvector_end() {
-    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     TVector<int>::Iterator it = vec.end();
 
     int actual_result = *(it-1);
@@ -367,7 +383,7 @@ bool tvector_end() {
     return TestSystem::check_exp(expected_result, actual_result);
 }
 
-//bool tvector_push_back_copy_filled() {
+// bool tvector_push_back_copy_filled() {
 //    TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 //    int a = 16;
 //    actual_result.push_back(a);
@@ -376,8 +392,8 @@ bool tvector_end() {
 //    return TestSystem::check_exp(expected_result, actual_result) && 
 //        TestSystem::check_exp((size_t)16, actual_result.size()) &&
 //        TestSystem::check_exp((size_t)30, actual_result.capacity());
-//}
-//bool tvector_push_back_copy_empty() {
+// }
+// bool tvector_push_back_copy_empty() {
 //    TVector<int> actual_result;
 //    int a = 16;
 //    actual_result.push_back(a);
@@ -386,8 +402,8 @@ bool tvector_end() {
 //    return TestSystem::check_exp(expected_result, actual_result) &&
 //        TestSystem::check_exp((size_t)1, actual_result.size()) &&
 //        TestSystem::check_exp((size_t)15, actual_result.capacity());
-//}
-//bool tvector_push_back_copy_empty() {
+// }
+// bool tvector_push_back_copy_empty() {
 //    TVector<int> actual_result;
 //    int a = 16;
 //    actual_result.push_back(a);
@@ -396,10 +412,10 @@ bool tvector_end() {
 //    return TestSystem::check_exp(expected_result, actual_result) &&
 //        TestSystem::check_exp((size_t)1, actual_result.size()) &&
 //        TestSystem::check_exp((size_t)15, actual_result.capacity());
-//}
-//bool tvector_push_back_copy() {
+// }
+// bool tvector_push_back_copy() {
 //    return tvector_push_back_copy_filled() && tvector_push_back_copy_empty();
-//}
+// }
 bool tvector_push_back_copy_empty() {
     TVector<int> actual_result;
     int a = 16;

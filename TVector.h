@@ -168,7 +168,8 @@ TVector<T>::TVector(size_type size) noexcept: _used(size), _deleted(0) {
 template<typename T>
 TVector<T>::TVector(size_type size, value_type elem): _used(size), _deleted(0) {
     if (size == 0) {
-        throw std::runtime_error("TVector with value can not be with zero size");
+        throw std::runtime_error("TVector with value"
+                                 " can not be with zero size");
     }
 
     _capacity = (size / _capacity_step + 1) * _capacity_step * (size > 0);
