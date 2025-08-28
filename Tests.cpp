@@ -84,7 +84,7 @@ void print_final_info() {
             (count_failed > 1 ? "s." : ".") << std::endl;
     }
 }
-}; // namespace TestSystem
+};  // namespace TestSystem
 
 #pragma region TvectorTests
 
@@ -384,14 +384,16 @@ bool tvector_end() {
 }
 
 // bool tvector_push_back_copy_filled() {
-//    TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+//    TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8,
+//    9, 10, 11, 12, 13, 14, 15 };
 //    int a = 16;
 //    actual_result.push_back(a);
-//    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+//    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8,
+//    9, 10, 11, 12, 13, 14, 15, 16 };
 //
-//    return TestSystem::check_exp(expected_result, actual_result) && 
-//        TestSystem::check_exp((size_t)16, actual_result.size()) &&
-//        TestSystem::check_exp((size_t)30, actual_result.capacity());
+//    return TestSystem::check_exp(expected_result, actual_result) &&
+//        TestSystem::check_exp(static_cast<size_t>(16), actual_result.size()) &&
+//        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 // }
 // bool tvector_push_back_copy_empty() {
 //    TVector<int> actual_result;
@@ -400,8 +402,8 @@ bool tvector_end() {
 //    TVector<int> expected_result = { 16 };
 //
 //    return TestSystem::check_exp(expected_result, actual_result) &&
-//        TestSystem::check_exp((size_t)1, actual_result.size()) &&
-//        TestSystem::check_exp((size_t)15, actual_result.capacity());
+//        TestSystem::check_exp(static_cast<size_t>(1), actual_result.size()) &&
+//        TestSystem::check_exp(static_cast<size_t>(15), actual_result.capacity());
 // }
 // bool tvector_push_back_copy_empty() {
 //    TVector<int> actual_result;
@@ -410,8 +412,8 @@ bool tvector_end() {
 //    TVector<int> expected_result = { 16 };
 //
 //    return TestSystem::check_exp(expected_result, actual_result) &&
-//        TestSystem::check_exp((size_t)1, actual_result.size()) &&
-//        TestSystem::check_exp((size_t)15, actual_result.capacity());
+//        TestSystem::check_exp(static_cast<size_t>(1), actual_result.size()) &&
+//        TestSystem::check_exp(static_cast<size_t>(15), actual_result.capacity());
 // }
 // bool tvector_push_back_copy() {
 //    return tvector_push_back_copy_filled() && tvector_push_back_copy_empty();
@@ -423,11 +425,11 @@ bool tvector_push_back_copy_empty() {
     TVector<int> expected_result = { 16 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)1, actual_result.size()) &&
-        TestSystem::check_exp((size_t)15, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(1), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15), actual_result.capacity());
 }
 bool tvector_push_back_copy_with_capacity() {
-    TVector<int> actual_result = { 1, 2, 3 };  
+    TVector<int> actual_result = { 1, 2, 3 };
     int a = 4;
     size_t old_capacity = actual_result.capacity();
     size_t old_size = actual_result.size();
@@ -438,7 +440,7 @@ bool tvector_push_back_copy_with_capacity() {
 
     return TestSystem::check_exp(expected_result, actual_result) &&
         TestSystem::check_exp(old_size + 1, actual_result.size()) &&
-        TestSystem::check_exp(old_capacity, actual_result.capacity()); 
+        TestSystem::check_exp(old_capacity, actual_result.capacity());
 }
 bool tvector_push_back_copy_full_capacity() {
     TVector<int> actual_result;
@@ -468,7 +470,7 @@ bool tvector_push_back_copy_large_vector() {
     int a = 42;
     actual_result.push_back(a);
 
-    bool size_ok = TestSystem::check_exp((size_t)(large_size + 1), actual_result.size());
+    bool size_ok = TestSystem::check_exp(static_cast<size_t>((large_size + 1)), actual_result.size());
     bool last_elem_ok = (actual_result[large_size] == a);
     return size_ok && last_elem_ok;
 }
@@ -502,32 +504,38 @@ bool tvector_push_back_copy() {
 }
 
 bool tvector_push_back_move() {
-    TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+    TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15 };
     actual_result.push_back(16);
-    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8,
+     9, 10, 11, 12, 13, 14, 15, 16 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, actual_result.size()) &&
-        TestSystem::check_exp((size_t)30, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 }
 bool tvector_push_front_copy() {
-    TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     int a = 1;
     actual_result.push_front(a);
-    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, actual_result.size()) &&
-        TestSystem::check_exp((size_t)30, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 }
 bool tvector_push_front_move() {
-    TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
     actual_result.push_front(1);
-    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    TVector<int> expected_result = { 1, 2, 3, 4, 5, 6, 7, 8,
+        9, 10, 11, 12, 13, 14, 15, 16 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, actual_result.size()) &&
-        TestSystem::check_exp((size_t)30, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 }
 bool tvector_insert_copy() {
     TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -536,18 +544,19 @@ bool tvector_insert_copy() {
     TVector<int> expected_result = { 2, 3, 12, 4, 5, 6, 7, 8, 9, 10};
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)10, actual_result.size()) &&
-        TestSystem::check_exp((size_t)15, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(10), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15), actual_result.capacity());
 }
 bool tvector_insert_elems_copy() {
     TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
     int a = 12;
     actual_result.insert(actual_result.begin() + 2, 7, a);
-    TVector<int> expected_result = { 2, 3, 12, 12, 12, 12, 12, 12, 12, 4, 5, 6, 7, 8, 9, 10 };
+    TVector<int> expected_result = { 2, 3, 12, 12, 12, 12, 12,
+        12, 12, 4, 5, 6, 7, 8, 9, 10 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, actual_result.size()) &&
-        TestSystem::check_exp((size_t)30, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 }
 bool tvector_insert_move() {
     TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -555,8 +564,8 @@ bool tvector_insert_move() {
     TVector<int> expected_result = { 2, 3, 12, 4, 5, 6, 7, 8, 9, 10 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)10, actual_result.size()) &&
-        TestSystem::check_exp((size_t)15, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(10), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15),actual_result.capacity());
 }
 bool tvector_emplace() {
     TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -564,13 +573,13 @@ bool tvector_emplace() {
     TVector<int> expected_result = { 2, 3, 12, 4, 5, 6, 7, 8, 9, 10 };
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)10, actual_result.size()) &&
-        TestSystem::check_exp((size_t)15, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(10), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15), actual_result.capacity());
 }
 
 bool tvector_pop_back_empty() {
     TVector<int> vec;
-    
+
     bool actual_result = true;
     bool expected_result = false;
 
@@ -627,7 +636,7 @@ bool tvector_pop_back_large_vector() {
         }
     }
 
-    return TestSystem::check_exp((size_t)(0), actual_result.size());
+    return TestSystem::check_exp(static_cast<size_t>(0), actual_result.size());
 }
 bool tvector_pop_back_after_shrink_to_fit() {
     TVector<int> actual_result(16);
@@ -662,8 +671,8 @@ bool tvector_pop_front() {
     actual_result.pop_front();
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)25, actual_result.size()) &&
-        TestSystem::check_exp((size_t)30, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(25), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 }
 bool tvector_erase() {
     TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 };
@@ -678,8 +687,8 @@ bool tvector_erase() {
     actual_result.erase(actual_result.begin() + 7);
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)24, actual_result.size()) &&
-        TestSystem::check_exp((size_t)30, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(24), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
 }
 
 bool tvector_erase_empty() {
@@ -703,13 +712,13 @@ bool comp(int a, int b) {
 bool tvector_test() {
     TVector<int> actual_result = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 };
     TVector<int> expected_result = { 2, 3, 4, 5, 7, 8, 9, 11, 222, 12, 13, 14, 15, 16, 18, 20, 21, 333, 22, 23, 24, 25, 26, 27, 28, 30, 31, 111, 32, 33, 34, 35 };
-    
+
     actual_result.pop_back();
     actual_result.pop_front();
     actual_result.erase(actual_result.begin() + 8);
     actual_result.erase(actual_result.begin() + 4);
     actual_result.erase(actual_result.begin() + 25);
-    actual_result.erase(actual_result.begin() + 15); 
+    actual_result.erase(actual_result.begin() + 15);
     actual_result.erase(actual_result.begin() + 13);
     actual_result.insert(actual_result.begin() + 25, 111);
     actual_result.insert(actual_result.begin() + 8, 222);
@@ -718,8 +727,8 @@ bool tvector_test() {
     //shuffle(actual_result);
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)32, actual_result.size()) &&
-        TestSystem::check_exp((size_t)45, actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(32), actual_result.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(45), actual_result.capacity());
 }
 
 bool tvector_iterator_init() {
@@ -1048,8 +1057,8 @@ bool tvector_clear() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)0, vec.size()) &&
-        TestSystem::check_exp((size_t)15, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(0), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15), vec.capacity());
 }
 bool tvector_shrink_to_fit() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
@@ -1062,8 +1071,8 @@ bool tvector_shrink_to_fit() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)16, vec.size()) &&
-        TestSystem::check_exp((size_t)16, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(16), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(16), vec.capacity());
 }
 bool tvector_resize_1() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 };
@@ -1088,8 +1097,8 @@ bool tvector_resize_1() {
 
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)32, vec.size()) &&
-        TestSystem::check_exp((size_t)45, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(32), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(45), vec.capacity());
 }
 bool tvector_resize_2() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 };
@@ -1113,8 +1122,8 @@ bool tvector_resize_2() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)25, vec.size()) &&
-        TestSystem::check_exp((size_t)30, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(25), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec.capacity());
 }
 bool tvector_resize_3() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32 };
@@ -1138,8 +1147,8 @@ bool tvector_resize_3() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)5, vec.size()) &&
-        TestSystem::check_exp((size_t)15, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(5), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15), vec.capacity());
 }
 bool tvector_shuffle() {
     TVector<int> vec = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -1158,8 +1167,8 @@ bool tvector_shuffle() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)6, vec.size()) &&
-        TestSystem::check_exp((size_t)15, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(6), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(15), vec.capacity());
 }
 
 bool find_chet(int a) {
@@ -1269,8 +1278,8 @@ bool tvector_size_value_init_large() {
             all_values_correct = false;
         }
     }
-    return TestSystem::check_exp((size_t)1000, vec.size()) &&
-           TestSystem::check_exp((size_t)1005, vec.capacity()) &&
+    return TestSystem::check_exp(static_cast<size_t>(1000), vec.size()) &&
+           TestSystem::check_exp(static_cast<size_t>(1005), vec.capacity()) &&
            TestSystem::check_exp(true, all_values_correct);
 }
 
@@ -1509,10 +1518,10 @@ bool tvector_move_from_empty() {
     TVector<int> vec1;
     TVector<int> vec2(std::move(vec1));
 
-    return TestSystem::check_exp((size_t)0, vec1.size()) &&
-           TestSystem::check_exp((size_t)0, vec1.capacity()) &&
-           TestSystem::check_exp((size_t)0, vec2.size()) &&
-           TestSystem::check_exp((size_t)0, vec2.capacity()) &&
+    return TestSystem::check_exp(static_cast<size_t>(0), vec1.size()) &&
+           TestSystem::check_exp(static_cast<size_t>(0), vec1.capacity()) &&
+           TestSystem::check_exp(static_cast<size_t>(0), vec2.size()) &&
+           TestSystem::check_exp(static_cast<size_t>(0), vec2.capacity()) &&
            TestSystem::check_exp(true, vec1.data() == nullptr) &&
            TestSystem::check_exp(true, vec2.data() == nullptr);
 }
@@ -1528,15 +1537,15 @@ bool tvector_initializer_list_duplicates() {
         }
     }
     return TestSystem::check_exp(true, all_same) &&
-           TestSystem::check_exp((size_t)5, vec.size());
+           TestSystem::check_exp(static_cast<size_t>(5), vec.size());
 }
 
 // Test edge cases for push operations
 bool tvector_push_to_full_capacity() {
     TVector<int> vec(15, 1); // Fill to exact capacity step
     vec.push_back(2);
-    return TestSystem::check_exp((size_t)16, vec.size()) &&
-           TestSystem::check_exp((size_t)30, vec.capacity()) &&
+    return TestSystem::check_exp(static_cast<size_t>(16), vec.size()) &&
+           TestSystem::check_exp(static_cast<size_t>(30), vec.capacity()) &&
            TestSystem::check_exp(2, vec.back());
 }
 
@@ -1565,8 +1574,8 @@ bool tvector_emplace_construction() {
 bool tvector_shrink_to_fit_empty() {
     TVector<int> vec;
     vec.shrink_to_fit();
-    return TestSystem::check_exp((size_t)0, vec.size()) &&
-           TestSystem::check_exp((size_t)0, vec.capacity());
+    return TestSystem::check_exp(static_cast<size_t>(0), vec.size()) &&
+           TestSystem::check_exp(static_cast<size_t>(0), vec.capacity());
 }
 
 bool tvector_shrink_to_fit_after_deletions() {
@@ -1575,15 +1584,15 @@ bool tvector_shrink_to_fit_after_deletions() {
     vec.erase(vec.begin() + 4);
     vec.shrink_to_fit();
 
-    return TestSystem::check_exp((size_t)8, vec.size()) &&
-           TestSystem::check_exp((size_t)8, vec.capacity());
+    return TestSystem::check_exp(static_cast<size_t>(8), vec.size()) &&
+           TestSystem::check_exp(static_cast<size_t>(8), vec.capacity());
 }
 
 // Test resize edge cases
 bool tvector_resize_to_zero() {
     TVector<int> vec = {1, 2, 3, 4, 5};
     vec.resize(0);
-    return TestSystem::check_exp((size_t)0, vec.size()) &&
+    return TestSystem::check_exp(static_cast<size_t>(0), vec.size()) &&
            TestSystem::check_exp(true, vec.is_empty());
 }
 
@@ -1591,7 +1600,7 @@ bool tvector_resize_same_size() {
     TVector<int> vec = {1, 2, 3, 4, 5};
     size_t old_capacity = vec.capacity();
     vec.resize(5);
-    return TestSystem::check_exp((size_t)5, vec.size()) &&
+    return TestSystem::check_exp(static_cast<size_t>(5), vec.size()) &&
            TestSystem::check_exp(old_capacity, vec.capacity());
 }
 
