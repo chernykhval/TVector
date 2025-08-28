@@ -14,7 +14,7 @@ enum State {
 
 template<typename T>
 class TVector {
- private: 
+ private:
     T* _data;
     State* _states;
     size_t _capacity;
@@ -24,19 +24,20 @@ class TVector {
     float _removal_coefficient = 0.15f;
 
  public:
-    using value_type = T;               // Тип элементов
-    using reference = T&;                // Ссылка на элемент
-    using const_reference = const T&;    // Константная ссылка на элемент
-    using pointer = T*;                  // Указатель на элемент
-    using const_pointer = const T*;      // Константный указатель на элемент
-    using size_type = std::size_t;       // Тип для размера
-    using difference_type = std::ptrdiff_t; // Тип для разницы между итераторами
+    using value_type = T;
+    using reference = T&;
+    using const_reference = const T&;
+    using pointer = T*;
+    using const_pointer = const T*;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
 
     class Iterator {
-    private:
+     private:
         T* _ptr;
         TVector<T>& _parent;
-    public:
+
+     public:
         using iterator_category = std::random_access_iterator_tag;
         using value_type = TVector::value_type;
         using reference = TVector::reference;
@@ -95,7 +96,8 @@ class TVector {
     void push_front(const value_type&) noexcept;
     void push_front(value_type&&) noexcept;
     Iterator insert(Iterator, const value_type&) noexcept;
-    Iterator insert(Iterator position, size_type n, const value_type& value) noexcept;
+    Iterator insert(Iterator position, size_type n,
+        const value_type& value) noexcept;
     Iterator insert(Iterator, value_type&&) noexcept;
     template <class... Args>
     Iterator emplace(Iterator position, Args&&... args);
@@ -164,7 +166,7 @@ TVector<T>::TVector(size_type size) noexcept: _used(size), _deleted(0) {
 }
 
 template<typename T>
-TVector<T>::TVector(size_type size, value_type elem) : _used(size), _deleted(0) {
+TVector<T>::TVector(size_type size, value_type elem): _used(size), _deleted(0) {
     if (size == 0) {
         throw std::runtime_error("TVector with value can not be with zero size");
     }
@@ -288,7 +290,8 @@ inline typename TVector<T>::reference TVector<T>::front() {
             return _data[i];
     }
 
-    throw std::runtime_error("TVector internal state corrupted: no busy elements found");
+    throw std::runtime_error("TVector internal state"
+                             " corrupted: no busy elements found");
 }
 
 template<typename T>
@@ -302,7 +305,8 @@ inline typename TVector<T>::reference TVector<T>::back() {
             return _data[i - 1];
     }
 
-    throw std::runtime_error("TVector internal state corrupted: no busy elements found");
+    throw std::runtime_error("TVector internal state"
+                             " corrupted: no busy elements found");
 }
 
 template<typename T>
@@ -529,7 +533,8 @@ typename TVector<T>::Iterator TVector<T>::emplace(Iterator position,
 }
 
 template<typename T>
-typename TVector<T>::Iterator TVector<T>::insert(Iterator position, value_type&& value)
+typename TVector<T>::Iterator
+TVector<T>::insert(Iterator position, value_type&& value)
 noexcept {
     if (!is_full()) {
         size_t insert_index = position.index();
@@ -774,7 +779,8 @@ typename TVector<T>::reference TVector<T>::operator[](size_type index) {
 }
 
 template<typename T>
-typename TVector<T>::const_reference TVector<T>::operator[](size_type index) const {
+typename TVector<T>::const_reference
+TVector<T>::operator[](size_type index) const {
     if (index >= _used) {
         throw std::out_of_range("TVector operator[]: Index out of range.");
     }
@@ -800,7 +806,8 @@ typename TVector<T>::const_reference TVector<T>::operator[](size_type index) con
 template<typename T>
 void TVector<T>::reset_memory_for_delete() noexcept {
     size_type correct_size = size();
-    size_type new_capacity = (correct_size / _capacity_step + 1) * _capacity_step;
+    size_type new_capacity =
+        (correct_size / _capacity_step + 1) * _capacity_step;
     T* new_data = new T[new_capacity];
     State* new_states = new State[new_capacity];
     size_type index = 0;
@@ -1028,7 +1035,8 @@ inline typename TVector<T>::reference TVector<T>::Iterator::operator*() {
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator::pointer TVector<T>::Iterator::operator->() noexcept {
+inline typename TVector<T>::Iterator::pointer
+TVector<T>::Iterator::operator->() noexcept {
     return _ptr;
 }
 
@@ -1181,7 +1189,8 @@ const noexcept {
 }
 
 template<typename T>
-typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::operator-(const Iterator& other) const {
+typename TVector<T>::Iterator::difference_type
+TVector<T>::Iterator::operator-(const Iterator& other) const {
     if (&_parent != &other._parent)
         throw std::runtime_error("Iterator operator-: Different parents");
 
@@ -1204,7 +1213,8 @@ typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::operator-(c
 }
 
 template<typename T>
-inline typename TVector<T>::Iterator::difference_type TVector<T>::Iterator::index() const noexcept {
+inline typename TVector<T>::Iterator::difference_type
+TVector<T>::Iterator::index() const noexcept {
     return _ptr - _parent._data;
 }
 
@@ -1229,7 +1239,8 @@ bool TVector<T>::Iterator::operator>=(const Iterator& other) const noexcept {
 }
 
 template<typename T>
-typename TVector<T>::Iterator::reference TVector<T>::Iterator::operator[](difference_type n) {
+typename TVector<T>::Iterator::reference
+TVector<T>::Iterator::operator[](difference_type n) {
     if (n < 0) {
         throw std::out_of_range("Negative index not allowed");
     }

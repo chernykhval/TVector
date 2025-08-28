@@ -1,10 +1,12 @@
-#include <iostream>
+// Copyright 2025 Chernykh Valentin
 #include <windows.h>
+
+#include <iostream>
 #include <stdexcept>
 #include <algorithm>
+#include <chrono>
 
 #include "TVector.h"
-#include <chrono>
 
 void set_color(int text_color, int bg_color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -12,73 +14,76 @@ void set_color(int text_color, int bg_color) {
 }
 
 namespace TestSystem {
-    int count_success = 0, count_failed = 0;
+int count_success = 0, count_failed = 0;
 
-    void start_test(bool(*test)(), const char* name_of_test) {
+void start_test(bool(*test)(), const char* name_of_test) {
+    set_color(2, 0);
+    std::cout << "[ RUN      ]";
+    set_color(7, 0);
+
+    std::cout << name_of_test << std::endl;
+
+    bool status = test();
+
+    if (status == true) {
         set_color(2, 0);
-        std::cout << "[ RUN      ]";
-        set_color(7, 0);
-        std::cout << name_of_test << std::endl;
-
-        bool status = test();
-
-        if (status == true) {
-            set_color(2, 0);
-            std::cout << "[       OK ]" << std::endl;
-            count_success++;
-        }
-        else {
-            set_color(4, 0);
-            std::cout << "[  FAILED  ]" << std::endl;
-            count_failed++;
-        }
-        set_color(7, 0);
+        std::cout << "[       OK ]" << std::endl;
+        count_success++;
+    } else {
+        set_color(4, 0);
+        std::cout << "[  FAILED  ]" << std::endl;
+        count_failed++;
     }
+    set_color(7, 0);
+}
 
-    template <class T>
-    bool check_exp(const T& expected, const T& actual) {
-        if (expected == actual) {
-            return true;
-        }
-        else {
-            std::cout << "Expected result is " << expected << ", but actual is " << actual << "." << std::endl;
-            return false;
-        }
+template <class T>
+bool check_exp(const T& expected, const T& actual) {
+    if (expected == actual) {
+        return true;
+    } else {
+        std::cout << "Expected result is " << expected <<
+            ", but actual is " << actual << "." << std::endl;
+        return false;
     }
+}
 
-    template <class T>
-    bool check_unexp(const T& unexpected, const T& actual) {
-        if (unexpected != actual) {
-            return true;
-        }
-        else {
-            std::cout << "Unexpected result is " << unexpected << ", but actual is " << actual << "." << std::endl;
-            return false;
-        }
+template <class T>
+bool check_unexp(const T& unexpected, const T& actual) {
+    if (unexpected != actual) {
+        return true;
+    } else {
+        std::cout << "Unexpected result is " << unexpected <<
+            ", but actual is " << actual << "." << std::endl;
+        return false;
     }
+}
 
-    void print_init_info() {
-        set_color(2, 0);
-        std::cout << "[==========] " << std::endl;
+void print_init_info() {
+    set_color(2, 0);
+    std::cout << "[==========] " << std::endl;
+    set_color(7, 0);
+}
+
+void print_final_info() {
+    set_color(2, 0);
+    std::cout << "[==========] ";
+    set_color(7, 0);
+    std::cout << count_success + count_failed << " test" <<
+        (count_success + count_failed > 1 ? "s" : "") << " ran." << std::endl;
+    set_color(2, 0);
+    std::cout << "[  PASSED  ] ";
+    set_color(7, 0);
+    std::cout << count_success << " test" <<
+        (count_success > 1 ? "s" : "") << std::endl;
+    if (count_failed > 0) {
+        set_color(4, 0);
+        std::cout << "[  FAILED  ] ";
         set_color(7, 0);
+        std::cout << count_failed << " test" <<
+            (count_failed > 1 ? "s." : ".") << std::endl;
     }
-
-    void print_final_info() {
-        set_color(2, 0);
-        std::cout << "[==========] ";
-        set_color(7, 0);
-        std::cout << count_success + count_failed << " test" << (count_success + count_failed > 1 ? "s" : "") << " ran." << std::endl;
-        set_color(2, 0);
-        std::cout << "[  PASSED  ] ";
-        set_color(7, 0);
-        std::cout << count_success << " test" << (count_success > 1 ? "s" : "") << std::endl;
-        if (count_failed > 0) {
-            set_color(4, 0);
-            std::cout << "[  FAILED  ] ";
-            set_color(7, 0);
-            std::cout << count_failed << " test" << (count_failed > 1 ? "s." : ".") << std::endl;
-        }
-    }
+}
 };
 
 #pragma region TvectorTests
@@ -93,8 +98,8 @@ bool tvector_default_init() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)0, vec.size()) &&
-        TestSystem::check_exp((size_t)0, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(0), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(0), vec.capacity());
 }
 bool tvector_size_init() {
     bool actual_result = true;
@@ -106,8 +111,8 @@ bool tvector_size_init() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)25, vec.size()) &&
-        TestSystem::check_exp((size_t)30, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(25), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec.capacity());
 }
 bool tvector_size_and_value_init() {
     bool actual_result = true;
@@ -119,8 +124,8 @@ bool tvector_size_and_value_init() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)25, vec.size()) &&
-        TestSystem::check_exp((size_t)30, vec.capacity());
+        TestSystem::check_exp(static_cast<size_t>(25), vec.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec.capacity());
 }
 bool tvector_copy_init() {
     bool actual_result = true;
@@ -137,10 +142,10 @@ bool tvector_copy_init() {
     }
 
     return TestSystem::check_exp(expected_result, actual_result) &&
-        TestSystem::check_exp((size_t)25, vec_1.size()) &&
-        TestSystem::check_exp((size_t)30, vec_1.capacity()) &&
-        TestSystem::check_exp((size_t)25, vec_2.size()) &&
-        TestSystem::check_exp((size_t)30, vec_2.capacity());
+        TestSystem::check_exp(static_cast<size_t>(25), vec_1.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec_1.capacity()) &&
+        TestSystem::check_exp(static_cast<size_t>(25), vec_2.size()) &&
+        TestSystem::check_exp(static_cast<size_t>(30), vec_2.capacity());
 }
 bool tvector_move_init() {
     bool actual_result = true;
