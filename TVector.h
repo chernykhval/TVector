@@ -71,7 +71,7 @@ class TVector {
 
     TVector() noexcept;
     explicit TVector(size_type) noexcept;
-    TVector(size_type, value_type) noexcept;
+    TVector(size_type, value_type);
     TVector(const TVector&) noexcept;
     TVector(TVector&&) noexcept;
     TVector(pointer, size_type);
@@ -148,7 +148,7 @@ TVector<T>::TVector() noexcept : _data(nullptr), _states(nullptr),
 _capacity(0), _used(0), _deleted(0) {}
 
 template<typename T>
-TVector<T>::TVector(size_type size) noexcept : _used(size), _deleted(0) {
+TVector<T>::TVector(size_type size) noexcept: _used(size), _deleted(0) {
     _capacity = (size / _capacity_step + 1) * _capacity_step * (size > 0);
     _data = new T[_capacity];
     _states = new State[_capacity];
@@ -164,7 +164,11 @@ TVector<T>::TVector(size_type size) noexcept : _used(size), _deleted(0) {
 }
 
 template<typename T>
-TVector<T>::TVector(size_type size, value_type elem) noexcept : _used(size), _deleted(0) {
+TVector<T>::TVector(size_type size, value_type elem) : _used(size), _deleted(0) {
+    if (size == 0) {
+        throw std::runtime_error("TVector with value can not be with zero size");
+    }
+
     _capacity = (size / _capacity_step + 1) * _capacity_step * (size > 0);
     _data = new T[_capacity];
     _states = new State[_capacity];
