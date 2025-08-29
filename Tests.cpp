@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <algorithm>
 #include <chrono>
+#include <cstdint>
+#include <utility>
 
 #include "TVector.h"
 
@@ -564,7 +566,8 @@ bool tvector_insert_elems_copy() {
 
     return TestSystem::check_exp(expected_result, actual_result) &&
         TestSystem::check_exp(static_cast<size_t>(16), actual_result.size()) &&
-        TestSystem::check_exp(static_cast<size_t>(30), actual_result.capacity());
+        TestSystem::check_exp(static_cast<size_t>(30),
+            actual_result.capacity());
 }
 bool tvector_insert_move() {
     TVector<int> actual_result = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -745,7 +748,7 @@ bool tvector_test() {
     actual_result.insert(actual_result.begin() + 8, 222);
     actual_result.insert(actual_result.begin() + 17, 333);
 
-    //shuffle(actual_result);
+    //  shuffle(actual_result);
 
     return TestSystem::check_exp(expected_result, actual_result) &&
         TestSystem::check_exp(static_cast<size_t>(32), actual_result.size()) &&
@@ -1252,17 +1255,17 @@ bool tvector_search_all() {
     return TestSystem::check_exp(expected_result, actual_result);
 }
 
-bool sort_check(unsigned long long a, unsigned long long b) {
+bool sort_check(uint64_t a, uint64_t b) {
     return a < b;
 }
 
 bool tvector_sort() {
-    TVector<unsigned long long> expected_result(100000000);
+    TVector<uint64_t> expected_result(100000000);
     std::cout << "vectors memory" << std::endl;
-    TVector<unsigned long long> actual_result(100000000);
-    unsigned long long a = 10;
+    TVector<uint64_t> actual_result(100000000);
+    uint64_t a = 10;
 
-    for (unsigned long long i = 0; i < 100000000; i++) {
+    for (uint64_t i = 0; i < 100000000; i++) {
         expected_result[i] = i;
 
         if (i == a) {
@@ -1273,7 +1276,7 @@ bool tvector_sort() {
 
     a = 10;
 
-    for (unsigned long long i = 0; i < 100000000; i++) {
+    for (uint64_t i = 0; i < 100000000; i++) {
         actual_result[100000000 - 1 - i] = i;
 
         if (i == a) {
@@ -1324,7 +1327,7 @@ bool tvector_size_value_init_large() {
            TestSystem::check_exp(true, all_values_correct);
 }
 
-// Test assignment operators with edge cases
+  // Test assignment operators with edge cases
 bool tvector_self_assignment() {
     TVector<int> vec = {1, 2, 3, 4, 5};
     TVector<int> original = vec;
@@ -1339,7 +1342,7 @@ bool tvector_assignment_different_sizes() {
     return TestSystem::check_exp(vec2, vec1);
 }
 
-// Test states() method
+  // Test states() method
 /*bool tvector_states_access() {
     TVector<int> vec = {1, 2, 3, 4, 5};
     State* states = vec.states();
@@ -1491,8 +1494,8 @@ bool tvector_iterator_arithmetic_edge_cases() {
 // Test iterator with deleted elements
 bool tvector_iterator_skip_deleted() {
     TVector<int> vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    vec.erase(vec.begin() + 2); // Delete element at index 2 (value 3)
-    vec.erase(vec.begin() + 4); // Delete element at index 4 (value 6)
+    vec.erase(vec.begin() + 2);  // Delete element at index 2 (value 3)
+    vec.erase(vec.begin() + 4);  // Delete element at index 4 (value 6)
 
     // Iterate through and collect values
     TVector<int> collected;
@@ -1548,7 +1551,7 @@ bool tvector_copy_with_deleted_elements() {
     vec1.erase(vec1.begin() + 4);
     vec1.erase(vec1.begin() + 6);
 
-    TVector<int> vec2(vec1); // Copy constructor
+    TVector<int> vec2(vec1);  // Copy constructor
 
     return TestSystem::check_exp(vec1, vec2) &&
            TestSystem::check_exp(vec1.size(), vec2.size());
@@ -1583,7 +1586,7 @@ bool tvector_initializer_list_duplicates() {
 
 // Test edge cases for push operations
 bool tvector_push_to_full_capacity() {
-    TVector<int> vec(15, 1); // Fill to exact capacity step
+    TVector<int> vec(15, 1);  // Fill to exact capacity step
     vec.push_back(2);
     return TestSystem::check_exp(static_cast<size_t>(16), vec.size()) &&
            TestSystem::check_exp(static_cast<size_t>(30), vec.capacity()) &&
@@ -1648,8 +1651,8 @@ bool tvector_resize_same_size() {
 // Test operator[] with deleted elements
 bool tvector_index_access_with_deletions() {
     TVector<int> vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    vec.erase(vec.begin() + 2); // Remove 3
-    vec.erase(vec.begin() + 4); // Remove 6 (now at index 4)
+    vec.erase(vec.begin() + 2);  // Remove 3
+    vec.erase(vec.begin() + 4);  // Remove 6 (now at index 4)
 
     // After deletions: {1, 2, 4, 5, 7, 8, 9, 10}
     return TestSystem::check_exp(1, vec[0]) &&
@@ -1791,8 +1794,8 @@ bool tvector_equality_after_operations() {
     TVector<int> vec2 = {0, 1, 2, 3, 4, 5, 6};
 
     // Modify vec2 to have same logical content as vec1
-    vec2.pop_front(); // Remove 0
-    vec2.pop_back();  // Remove 6
+    vec2.pop_front();  // Remove 0
+    vec2.pop_back();   // Remove 6
 
     return TestSystem::check_exp(vec1, vec2);
 }
@@ -1839,8 +1842,8 @@ bool tvector_sort_reverse_order() {
 
 bool tvector_sort_with_deletions() {
     TVector<int> vec = {5, 4, 3, 2, 1, 6, 7, 8};
-    vec.erase(vec.begin() + 2); // Remove 3
-    vec.erase(vec.begin() + 4); // Remove 1
+    vec.erase(vec.begin() + 2);  // Remove 3
+    vec.erase(vec.begin() + 4);  // Remove 1
 
     tv_sort(vec, sort_scending);
 
@@ -1988,12 +1991,12 @@ int main() {
 
     TestSystem::start_test(tvector_test, "test");
 
-    //TestSystem::start_test(tvector_sort, "sort");
+    // TestSystem::start_test(tvector_sort, "sort");
     TestSystem::start_test(tvector_push_back_copy, "push_back_copy");
     TestSystem::start_test(tvector_pop_back, "pop_back");
     TestSystem::start_test(tvector_erase_empty, "erase_empty");
-    //TestSystem::start_test(tvector_pop_back_large_vector,
-    //"pop_back_large_vector");
+    // TestSystem::start_test(tvector_pop_back_large_vector,
+    // "pop_back_large_vector");
     TestSystem::print_final_info();
 
     std::cout << "Block of AI generated Tests" << std::endl;
