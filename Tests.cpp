@@ -1327,11 +1327,11 @@ bool tvector_size_value_init_large() {
            TestSystem::check_exp(true, all_values_correct);
 }
 
-  // Test assignment operators with edge cases
+// Test assignment operators with edge cases
 bool tvector_self_assignment() {
     TVector<int> vec = {1, 2, 3, 4, 5};
     TVector<int> original = vec;
-    vec = vec; // Self-assignment
+    vec = vec;  // Self-assignment
     return TestSystem::check_exp(original, vec);
 }
 
