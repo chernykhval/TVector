@@ -126,7 +126,7 @@ class TVector {
     inline reference back();
     inline Iterator begin() noexcept;
     inline Iterator end() noexcept;
-    ConstIterator begin() const noexcept;
+    inline ConstIterator begin() const noexcept;
     inline ConstIterator end() const noexcept;
 
     void push_back(const value_type&) noexcept;
@@ -387,7 +387,7 @@ inline typename TVector<T>::Iterator TVector<T>::end() noexcept {
 }
 
 template<typename T>
-typename TVector<T>::ConstIterator TVector<T>::begin() const noexcept {
+inline typename TVector<T>::ConstIterator TVector<T>::begin() const noexcept {
     if (size() == 0) {
         return ConstIterator(&_data[0], *this);
     }
@@ -402,6 +402,24 @@ typename TVector<T>::ConstIterator TVector<T>::begin() const noexcept {
     }
 
     return ConstIterator(&_data[begin_index], *this);
+}
+
+template<typename T>
+inline typename TVector<T>::ConstIterator TVector<T>::end() const noexcept {
+    if (size() == 0) {
+        return ConstIterator(&_data[0], *this);
+    }
+
+    size_t end_index = _used;
+
+    for (size_t i = _used; i > 0; i--) {
+        if (_states[i - 1] == Busy) {
+            end_index = i;
+            break;
+        }
+    }
+
+    return ConstIterator(&_data[end_index - 1] + 1, *this);
 }
 
 template<typename T>
@@ -1362,6 +1380,26 @@ TVector<T>::ConstIterator::operator=(const ConstIterator& other) noexcept {
     }
 
     return *this;
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator
+TVector<T>::ConstIterator::operator-(int num) const {
+    int new_index = _ptr - _parent._data;
+
+    if (new_index - num > _parent._used || new_index - num < 0) {
+        throw std::out_of_range("ConstIterator operator-: Index out of range.");
+    }
+
+    while (new_index > 0 && num > 0) {
+        new_index--;
+
+        if (_parent._states[new_index] != Deleted) {
+            num--;
+        }
+    }
+
+    return ConstIterator(&_parent._data[new_index], _parent);
 }
 
 #pragma endregion ConstIteratorRealisation
