@@ -1343,7 +1343,8 @@ TVector<T>::Iterator::operator[](difference_type n) {
 #pragma region ConstIteratorRealisation
 
 template<typename T>
-TVector<T>::ConstIterator::ConstIterator(const T* ptr, const TVector<T>& parent) noexcept
+TVector<T>::ConstIterator::ConstIterator(const T* ptr,
+    const TVector<T>& parent)noexcept
     : _ptr(ptr), _parent(parent) {}
 
 template<typename T>

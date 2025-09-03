@@ -1995,7 +1995,7 @@ bool tvector_const_iterator_after_modification() {
         sum += *it;
     }
 
-    return TestSystem::check_exp(10, sum); // 1+2+3+4=10
+    return TestSystem::check_exp(10, sum);  // 1+2+3+4=10
 }
 
 #pragma endregion
