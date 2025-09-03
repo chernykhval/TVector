@@ -46,6 +46,7 @@ class TVector {
 
         Iterator(T*, TVector<T>&) noexcept;
         Iterator(const Iterator&) noexcept;
+
         inline reference operator*();
         inline pointer operator->() noexcept;
         inline Iterator& operator=(const Iterator&) noexcept;
@@ -1081,7 +1082,8 @@ TVector<T>::Iterator::Iterator(const Iterator& other) noexcept
     : _ptr(other._ptr), _parent(other._parent) {}
 
 template <typename T>
-inline typename TVector<T>::reference TVector<T>::Iterator::operator*() {
+inline typename TVector<T>::Iterator::reference
+TVector<T>::Iterator::operator*() {
     if (_ptr == nullptr) {
         throw std::out_of_range("Iterator operator*: Nullptr.");
     }
@@ -1330,5 +1332,36 @@ TVector<T>::ConstIterator::ConstIterator(const T* ptr, const TVector<T>& parent)
 template<typename T>
 TVector<T>::ConstIterator::ConstIterator(const ConstIterator& other) noexcept
     : _ptr(other._ptr), _parent(other._parent) {}
+
+template <typename T>
+inline typename TVector<T>::ConstIterator::reference
+TVector<T>::ConstIterator::operator*() {
+    if (_ptr == nullptr) {
+        throw std::out_of_range("ConstIterator operator*: Nullptr.");
+    }
+
+    if (_ptr < _parent._data || _ptr >= _parent._data + _parent._used) {
+        throw std::out_of_range("ConstIterator operator*: Index out of range.");
+    }
+
+    return *_ptr;
+}
+
+template<typename T>
+inline typename TVector<T>::ConstIterator::pointer
+TVector<T>::ConstIterator::operator->() noexcept {
+    return _ptr;
+}
+
+template<typename T>
+inline typename TVector<T>::ConstIterator&
+TVector<T>::ConstIterator::operator=(const ConstIterator& other) noexcept {
+    if (this != &other) {
+        _ptr = other._ptr;
+        _parent = other._parent;
+    }
+
+    return *this;
+}
 
 #pragma endregion ConstIteratorRealisation
