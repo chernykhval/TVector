@@ -70,7 +70,7 @@ class TVector {
 
     class ConstIterator {
      private:
-        T* _ptr;
+        const T* _ptr;
         const TVector<T>& _parent;
 
      public:
@@ -125,6 +125,8 @@ class TVector {
     inline reference back();
     inline Iterator begin() noexcept;
     inline Iterator end() noexcept;
+    ConstIterator begin() const noexcept;
+    inline ConstIterator end() const noexcept;
 
     void push_back(const value_type&) noexcept;
     void push_back(value_type&&) noexcept;
@@ -381,6 +383,24 @@ inline typename TVector<T>::Iterator TVector<T>::end() noexcept {
     }
 
     return Iterator(&_data[end_index - 1] + 1, *this);
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator TVector<T>::begin() const noexcept {
+    if (size() == 0) {
+        return ConstIterator(&_data[0], *this);
+    }
+
+    size_t begin_index = 0;
+
+    for (size_t i = 0; i < _used; i++) {
+        if (_states[i] == Busy) {
+            begin_index = i;
+            break;
+        }
+    }
+
+    return ConstIterator(&_data[begin_index], *this);
 }
 
 template<typename T>
