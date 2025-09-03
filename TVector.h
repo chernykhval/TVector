@@ -1513,4 +1513,18 @@ typename TVector<T>::ConstIterator&
     return *this;
 }
 
+template<typename T>
+inline bool TVector<T>::ConstIterator::operator!=(const ConstIterator& other)
+const noexcept {
+    return _ptr != other._ptr || _parent != other._parent;
+}
+
+template<typename T>
+inline bool TVector<T>::ConstIterator::operator==(const ConstIterator& other)
+const noexcept {
+    return _ptr == other._ptr && _parent == other._parent;
+}
+
+
+
 #pragma endregion ConstIteratorRealisation
