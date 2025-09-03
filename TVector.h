@@ -1431,6 +1431,26 @@ TVector<T>::ConstIterator::operator--(int) noexcept {
 
 template<typename T>
 typename TVector<T>::ConstIterator
+TVector<T>::ConstIterator::operator+(int num) const {
+    int new_index = _ptr - _parent._data;
+
+    if (new_index + num > _parent._used || new_index + num < 0) {
+        throw std::out_of_range("ConstIterator operator+: Index out of range.");
+    }
+
+    while (new_index < _parent._used && num > 0) {
+        new_index++;
+
+        if (_parent._states[new_index] != Deleted) {
+            num--;
+        }
+    }
+
+    return ConstIterator(&_parent._data[new_index], _parent);
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator
 TVector<T>::ConstIterator::operator-(int num) const {
     int new_index = _ptr - _parent._data;
 
@@ -1447,6 +1467,50 @@ TVector<T>::ConstIterator::operator-(int num) const {
     }
 
     return ConstIterator(&_parent._data[new_index], _parent);
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator&
+    TVector<T>::ConstIterator::operator+=(int num) {
+    int new_index = _ptr - _parent._data;
+
+    if (new_index + num > _parent._used || new_index + num < 0) {
+        throw std::out_of_range("ConstIterator operator+: Index out of range.");
+    }
+
+    while (new_index < _parent._used && num > 0) {
+        new_index++;
+
+        if (_parent._states[new_index] != Deleted) {
+            num--;
+        }
+    }
+
+    _ptr = &_parent._data[new_index];
+
+    return *this;
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator&
+    TVector<T>::ConstIterator::operator-=(int num) {
+    int new_index = _ptr - _parent._data;
+
+    if (new_index - num > _parent._used || new_index - num < 0) {
+        throw std::out_of_range("ConstIterator operator-: Index out of range.");
+    }
+
+    while (new_index >= 0 && num > 0) {
+        new_index--;
+
+        if (_parent._states[new_index] != Deleted) {
+            num--;
+        }
+    }
+
+    _ptr = &_parent._data[new_index];
+
+    return *this;
 }
 
 #pragma endregion ConstIteratorRealisation
