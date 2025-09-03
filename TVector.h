@@ -1383,6 +1383,53 @@ TVector<T>::ConstIterator::operator=(const ConstIterator& other) noexcept {
 }
 
 template<typename T>
+typename TVector<T>::ConstIterator&
+    TVector<T>::ConstIterator::operator++() noexcept {
+    difference_type current_index = _ptr - _parent._data;
+
+    for (difference_type i = current_index + 1; i <= _parent._used; i++) {
+        if (_parent._states[i] != Deleted) {
+            _ptr = &_parent._data[i];
+            break;
+        }
+    }
+
+    return *this;
+}
+
+template<typename T>
+inline typename TVector<T>::ConstIterator
+TVector<T>::ConstIterator::operator++(int) noexcept {
+    ConstIterator temp = *this;
+    ++(*this);
+
+    return temp;
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator&
+    TVector<T>::ConstIterator::operator--() noexcept {
+    difference_type current_index = _ptr - _parent._data;
+
+    for (difference_type i = current_index - 1; i >= 0; i--) {
+        if (_parent._states[i] != Deleted) {
+            _ptr = &_parent._data[i];
+            break;
+        }
+    }
+
+    return *this;
+}
+
+template<typename T>
+inline typename TVector<T>::ConstIterator
+TVector<T>::ConstIterator::operator--(int) noexcept {
+    ConstIterator temp = *this;
+    --(*this);
+    return temp;
+}
+
+template<typename T>
 typename TVector<T>::ConstIterator
 TVector<T>::ConstIterator::operator-(int num) const {
     int new_index = _ptr - _parent._data;
