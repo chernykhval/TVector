@@ -68,7 +68,42 @@ class TVector {
         reference operator[](difference_type);
     };
 
-    using const_iterator = const Iterator;
+    class ConstIterator {
+     private:
+        T* _ptr;
+        const TVector<T>& _parent;
+
+     public:
+        using iterator_category = std::random_access_iterator_tag;
+        using value_type = TVector::value_type;
+        using reference = TVector::const_reference;
+        using pointer = TVector::const_pointer;
+        using difference_type = TVector::difference_type;
+
+        ConstIterator(const T*, const TVector<T>&) noexcept;
+        ConstIterator(const ConstIterator&) noexcept;
+
+        inline reference operator*();
+        inline pointer operator->() noexcept;
+        inline ConstIterator& operator=(const ConstIterator&) noexcept;
+        ConstIterator& operator++() noexcept;
+        inline ConstIterator operator++(int) noexcept;
+        ConstIterator& operator--() noexcept;
+        inline ConstIterator operator--(int) noexcept;
+        ConstIterator operator+(int) const;
+        ConstIterator operator-(int) const;
+        ConstIterator& operator+=(int);
+        ConstIterator& operator-=(int);
+        inline bool operator!=(const ConstIterator&) const noexcept;
+        inline bool operator==(const ConstIterator&) const noexcept;
+        difference_type operator-(const ConstIterator&) const;
+        inline difference_type index() const noexcept;
+        bool operator<(const ConstIterator&) const noexcept;
+        bool operator>(const ConstIterator&) const noexcept;
+        bool operator<=(const ConstIterator&) const noexcept;
+        bool operator>=(const ConstIterator&) const noexcept;
+        reference operator[](difference_type);
+    };
 
     TVector() noexcept;
     explicit TVector(size_type) noexcept;
@@ -144,6 +179,8 @@ class TVector {
         size_type, bool (*comp)(U, U)) noexcept;
     inline void swap_elem(size_type, size_type) noexcept;
 };
+
+#pragma region TVectorRealization
 
 template<typename T>
 TVector<T>::TVector() noexcept : _data(nullptr), _states(nullptr),
@@ -1012,6 +1049,7 @@ int search_end(TVector<U>& vec, bool(*check)(U)) noexcept {
 
     return -1;
 }
+#pragma endregion TVectorRealization
 
 #pragma region IteratorsRealization
 template<typename T>
@@ -1262,3 +1300,15 @@ TVector<T>::Iterator::operator[](difference_type n) {
     throw std::runtime_error("Element not found");
 }
 #pragma endregion
+
+#pragma region ConstIteratorRealisation
+
+template<typename T>
+TVector<T>::ConstIterator::ConstIterator(const T* ptr, const TVector<T>& parent) noexcept
+    : _ptr(ptr), _parent(parent) {}
+
+template<typename T>
+TVector<T>::ConstIterator::ConstIterator(const ConstIterator& other) noexcept
+    : _ptr(other._ptr), _parent(other._parent) {}
+
+#pragma endregion ConstIteratorRealisation
