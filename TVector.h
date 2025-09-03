@@ -86,7 +86,6 @@ class TVector {
 
         inline reference operator*();
         inline pointer operator->() noexcept;
-        inline ConstIterator& operator=(const ConstIterator&) noexcept;
         ConstIterator& operator++() noexcept;
         inline ConstIterator operator++(int) noexcept;
         ConstIterator& operator--() noexcept;
@@ -1369,17 +1368,6 @@ template<typename T>
 inline typename TVector<T>::ConstIterator::pointer
 TVector<T>::ConstIterator::operator->() noexcept {
     return _ptr;
-}
-
-template<typename T>
-inline typename TVector<T>::ConstIterator&
-TVector<T>::ConstIterator::operator=(const ConstIterator& other) noexcept {
-    if (this != &other) {
-        _ptr = other._ptr;
-        _parent = other._parent;
-    }
-
-    return *this;
 }
 
 template<typename T>
