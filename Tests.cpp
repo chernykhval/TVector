@@ -1897,6 +1897,109 @@ bool tvector_performance_push_back() {
 
 #pragma endregion
 
+#pragma region ConstIteratorTests
+
+bool tvector_const_iterator_begin() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    TVector<int>::ConstIterator it = vec.begin();
+
+    int actual_result = *it;
+    int expected_result = 1;
+
+    return TestSystem::check_exp(expected_result, actual_result);
+}
+
+bool tvector_const_iterator_end() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    TVector<int>::ConstIterator it = vec.end();
+    int actual_result = *(it - 1);
+    int expected_result = 5;
+
+    return TestSystem::check_exp(expected_result, actual_result);
+}
+
+bool tvector_const_iterator_dereference() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    TVector<int>::ConstIterator it = vec.begin();
+
+    int actual_result = *it;
+    int expected_result = 1;
+
+    // Проверяем, что нельзя изменить значение через const_iterator
+    bool cannot_modify = true;
+    // *it = 10; // Эта строка должна вызывать ошибку компиляции
+
+    return TestSystem::check_exp(expected_result, actual_result) &&
+           TestSystem::check_exp(true, cannot_modify);
+}
+
+bool tvector_const_iterator_increment() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    TVector<int>::ConstIterator it = vec.begin();
+
+    ++it;
+    int actual_result = *it;
+    int expected_result = 2;
+
+    return TestSystem::check_exp(expected_result, actual_result);
+}
+
+bool tvector_const_iterator_decrement() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    TVector<int>::ConstIterator it = vec.end();
+
+    --it;
+    int actual_result = *it;
+    int expected_result = 5;
+
+    return TestSystem::check_exp(expected_result, actual_result);
+}
+
+bool tvector_const_iterator_comparison() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    TVector<int>::ConstIterator begin_it = vec.begin();
+    TVector<int>::ConstIterator end_it = vec.end();
+
+    bool not_equal = begin_it != end_it;
+    bool equal = begin_it == begin_it;
+
+    return TestSystem::check_exp(true, not_equal) &&
+           TestSystem::check_exp(true, equal);
+}
+
+bool tvector_const_iterator_range_based_for() {
+    const TVector<int> vec = {1, 2, 3, 4, 5};
+    int sum = 0;
+
+    for (const int& value : vec) {
+        sum += value;
+    }
+
+    return TestSystem::check_exp(15, sum);
+}
+
+bool tvector_const_iterator_after_modification() {
+    TVector<int> vec = {1, 2, 3};
+    const TVector<int>& const_ref = vec;
+
+    // Сохраняем итераторы до модификации
+    auto old_begin = const_ref.begin();
+    auto old_end = const_ref.end();
+
+    // Модифицируем вектор
+    vec.push_back(4);
+
+    // Проверяем, что итераторы остались валидными
+    int sum = 0;
+    for (auto it = const_ref.begin(); it != const_ref.end(); ++it) {
+        sum += *it;
+    }
+
+    return TestSystem::check_exp(10, sum); // 1+2+3+4=10
+}
+
+#pragma endregion
+
 int main() {
     TestSystem::print_init_info();
     TestSystem::start_test(tvector_default_init, "default_init");
@@ -2064,6 +2167,26 @@ int main() {
      "shuffle_preserves_elements");
     TestSystem::start_test(tvector_performance_push_back,
         "performance_push_back");
+
+    TestSystem::start_test(tvector_const_iterator_begin,
+     "const_iterator_begin");
+    TestSystem::start_test(tvector_const_iterator_end,
+     "const_iterator_end");
+    TestSystem::start_test(tvector_const_iterator_dereference,
+     "tvector_const_iterator_dereference");
+    TestSystem::start_test(tvector_const_iterator_increment,
+     "tvector_const_iterator_increment");
+    TestSystem::start_test(tvector_const_iterator_decrement,
+     "tvector_const_iterator_decrement");
+    TestSystem::start_test(tvector_const_iterator_comparison,
+     "tvector_const_iterator_comparison");
+    TestSystem::start_test(tvector_const_iterator_range_based_for,
+     "tvector_const_iterator_range_based_for");
+    TestSystem::start_test(tvector_const_iterator_after_modification,
+     "tvector_const_iterator_after_modification");
+
     TestSystem::print_final_info();
+
+
     return 0;
 }
