@@ -1525,6 +1525,82 @@ const noexcept {
     return _ptr == other._ptr && _parent == other._parent;
 }
 
+template<typename T>
+typename TVector<T>::ConstIterator::difference_type
+TVector<T>::ConstIterator::operator-(const ConstIterator& other) const {
+    if (&_parent != &other._parent)
+        throw std::runtime_error("ConstIterator operator-: Different parents");
 
+    int reverse = _ptr < other._ptr ? -1 : 1;
+    ConstIterator left = _ptr < other._ptr ? *this : other;
+    ConstIterator right = _ptr > other._ptr ? *this : other;
+
+    difference_type distance = 0;
+    pointer current = left._ptr;
+
+    while (current != right._ptr) {
+        if (_parent._states[current - _parent._data] != Deleted) {
+            distance++;
+        }
+
+        current++;
+    }
+
+    return distance * reverse;
+}
+
+template<typename T>
+inline typename TVector<T>::ConstIterator::difference_type
+TVector<T>::ConstIterator::index() const noexcept {
+    return _ptr - _parent._data;
+}
+
+template<typename T>
+bool TVector<T>::ConstIterator::operator<(const ConstIterator& other)
+const noexcept {
+    return _ptr < other._ptr;
+}
+
+template<typename T>
+bool TVector<T>::ConstIterator::operator>(const ConstIterator& other)
+const noexcept {
+    return _ptr > other._ptr;
+}
+
+template<typename T>
+bool TVector<T>::ConstIterator::operator<=(const ConstIterator& other)
+const noexcept {
+    return _ptr <= other._ptr;
+}
+
+template<typename T>
+bool TVector<T>::ConstIterator::operator>=(const ConstIterator& other)
+const noexcept {
+    return _ptr >= other._ptr;
+}
+
+template<typename T>
+typename TVector<T>::ConstIterator::reference
+TVector<T>::ConstIterator::operator[](difference_type n) {
+    if (n < 0) {
+        throw std::out_of_range("Negative index not allowed");
+    }
+
+    ConstIterator tmp = *this;
+    difference_type count = 0;
+
+    while (tmp != _parent.end()) {
+        if (_parent._states[tmp.index()] == Busy) {
+            if (count == n) {
+                return *tmp;
+            }
+            count++;
+        }
+
+        ++tmp;
+    }
+
+    throw std::runtime_error("Element not found");
+}
 
 #pragma endregion ConstIteratorRealisation
